@@ -1,13 +1,13 @@
 #ifndef STATISTICS_HPP
 #define STATISTICS_HPP
 
+#include <boost/json.hpp>
+#include <Eigen/Dense>
 #include <vector>
 #include <string>
 #include <variant>
 #include <optional>
-#include <iostream>
-#include <fstream>
-#include <json/json.h>
+#include <map>
 
 class Statistics {
 public:
@@ -22,7 +22,10 @@ private:
     void loadData();
     void calculateStatistics();
     void outputResults();
-    // More function declarations for statistical operations
+    boost::json::value toJSON();
+
+    // Utility functions to convert data to Eigen types
+    Eigen::VectorXd convertToEigenVector(const std::vector<double>& values);
 };
 
 #endif // STATISTICS_HPP
