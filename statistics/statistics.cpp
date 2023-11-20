@@ -1,41 +1,55 @@
 #include "statistics.hpp"
 #include <fstream>
 #include <boost/json/src.hpp>
+#include "csv.hpp"
 
 Statistics::Statistics(const std::string& inputFile, const std::string& outputFile)
         : inputFile(inputFile), outputFile(outputFile) {}
 
-Eigen::VectorXd Statistics::convertToEigenVector(const std::vector<double>& values) {
-    return Eigen::VectorXd::Map(values.data(), values.size());
+bool mightBeHeader(const csv::CSVRow& row) {
+    for (const auto& field : row) {
+        if (!field.is_str() || !std::all_of(field.get<>().begin(), field.get<>().end(), ::isalpha)) {
+            return false;
+        }
+    }
+    return true;
 }
 
 void Statistics::loadData() {
-    std::ifstream file(inputFile);
-    if (!file.is_open()) {
-        throw std::runtime_error("Unable to open file: " + inputFile);
+    csv::CSVReader reader(inputFile);
+
+    auto firstRow = reader.begin();
+    bool hasHeader = firstRow != reader.end() && mightBeHeader(*firstRow);
+
+    if (hasHeader) {
+        columns = reader.get_col_names();
+    } else {
+        // Generate generic column names (Column1, Column2, etc.)
+        for (size_t i = 0; i < firstRow->size(); ++i) {
+            columns.push_back("Column" + std::to_string(i + 1));
+        }
     }
 
-    std::string fileContent((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-    file.close();
+    dataMatrix.resize(columns.size());
 
-    // Assuming JSON format for this implementation
-    try {
-        auto json = boost::json::parse(fileContent);
-        // Parse the JSON data and populate the 'data' vector
-        // For simplicity, assuming a specific structure; adapt as needed
-        for (auto& item : json.as_array()) {
-            for (auto& [key, value] : item.as_object()) {
-                if (value.is_double()) {
-                    data.push_back(value.as_double());
-                } else if (value.is_int64()) {
-                    data.push_back(static_cast<int>(value.as_int64()));
-                } else if (value.is_string()) {
-                    data.push_back(value.as_string().c_str());
-                }
+    for (auto& row : reader) {
+        size_t columnIndex = 0;
+        for (auto& field : row) {
+            std::optional<DataVariant> value;
+
+            if (field.is_null()) {
+                value = std::nullopt; // Handle blank fields
+            } else if (field.is_int()) {
+                value = field.get<int>();
+            } else if (field.is_double()) {
+                value = field.get<double>();
+            } else {
+                value = field.get<>();
             }
+
+            dataMatrix[columnIndex].push_back(value);
+            columnIndex++;
         }
-    } catch (const boost::json::parse_error& e) {
-        throw std::runtime_error("JSON parsing error: " + std::string(e.what()));
     }
 }
 

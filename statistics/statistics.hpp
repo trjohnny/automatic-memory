@@ -15,7 +15,9 @@ public:
     void analyze();
 
 private:
-    std::vector<std::variant<int, double, std::string>> data;
+    using DataVariant = std::variant<int, double, std::string>;
+    std::vector<std::vector<std::optional<DataVariant>>> dataMatrix;
+    std::vector<std::string> columns;
     std::string inputFile;
     std::string outputFile;
 
