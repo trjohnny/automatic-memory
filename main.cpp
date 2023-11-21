@@ -4,8 +4,8 @@
 
 int main() {
     try {
-        std::string csvFilePath = "path/to/your/data.csv";
-        std::string outputFilePath = "path/to/output/results.txt";
+        std::string csvFilePath = "/Users/giovanni/housing.csv";
+        std::string outputFilePath = "/Users/giovanni/out.txt";
 
         Statistics stats(csvFilePath, outputFilePath);
         stats.analyze();

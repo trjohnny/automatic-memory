@@ -6,7 +6,8 @@
 #include <string>
 #include <variant>
 #include <optional>
-#include <map>
+#include <unordered_map>
+#include <unordered_set>
 
 class Statistics {
 public:
@@ -28,7 +29,8 @@ private:
     };
 
     std::vector<NumericalStats> numericalStatistics;
-    std::vector<std::map<std::string, int>> categoricalFrequencyCounts;
+    std::vector<std::unordered_map<std::string, int>> categoricalFrequencyCounts;
+    std::unordered_set<std::string> numericalColumns;
     Eigen::MatrixXd correlationMatrix;
 
     void loadData();

@@ -52,6 +52,9 @@ void Statistics::calculateStatistics() {
     // Preprocess data: separate numerical and categorical data, and check column types
     for (size_t i = 0; i < numColumns; ++i) {
         bool isNumerical = std::holds_alternative<double>(dataMatrix[i].front().value_or(0));
+        if (isNumerical) {
+            numericalColumns.insert(columns[i]);
+        }
 
         for (const auto& val : dataMatrix[i]) {
             if (!val.has_value()) continue;
@@ -101,6 +104,7 @@ void Statistics::outputResults() {
     // Output for Numerical Data
     outFile << "Numerical Data Statistics:\n";
     for (size_t i = 0; i < numericalStatistics.size(); ++i) {
+        if (numericalColumns.find(columns[i]) == numericalColumns.end()) continue;
         outFile << columns[i] << ":\n";
         outFile << "  Mean: " << numericalStatistics[i].mean << "\n";
         outFile << "  Median: " << numericalStatistics[i].median << "\n";
@@ -111,6 +115,7 @@ void Statistics::outputResults() {
     // Output for Categorical Data
     outFile << "\nCategorical Data Frequency Counts:\n";
     for (size_t i = 0; i < categoricalFrequencyCounts.size(); ++i) {
+        if (numericalColumns.find(columns[i]) != numericalColumns.end()) continue;
         outFile << columns[i] << ":\n";
         for (const auto& pair : categoricalFrequencyCounts[i]) {
             outFile << "  " << pair.first << ": " << pair.second << "\n";

@@ -25,7 +25,6 @@ target_link_libraries(statistics PUBLIC
 
 # Include directory for the statistics library
 target_include_directories(statistics PUBLIC
-        ${CSV_PARSER_INCLUDE_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}/statistics
 )
 
