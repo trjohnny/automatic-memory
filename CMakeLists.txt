@@ -39,5 +39,5 @@ target_include_directories(statistics PUBLIC
         ${CSV_PARSER_INCLUDE_DIR}
 )
 
-add_executable(new_target main.cpp)
-target_link_libraries(new_target PRIVATE statistics)
+add_executable(toolbox main.cpp)
+target_link_libraries(toolbox PRIVATE statistics)
