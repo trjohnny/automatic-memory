@@ -1,59 +1,45 @@
 #include <fstream>
+#include <utility>
 #include <gsl/gsl_statistics_double.h>
 #include <gsl/gsl_sort_double.h>
-#include <map>
-#include "csv.hpp"
 #include "statistics.hpp"
 
-Statistics::Statistics(const std::string& inputFile, const std::string& outputFile)
-        : inputFile(inputFile), outputFile(outputFile) {}
-
-bool mightBeHeader(const csv::CSVRow& row) {
-    for (auto& field : row) {
-        if (!field.is_str() || !std::all_of(field.get<>().begin(), field.get<>().end(), ::isalpha)) {
-            return false;
-        }
-    }
-    return true;
-}
+Statistics::Statistics(std::string  inputFile, std::string  outputFile)
+        : inputFile(std::move(inputFile)), outputFile(std::move(outputFile)) {}
 
 void Statistics::loadData() {
-    csv::CSVReader reader(inputFile);
+    std::ifstream file(inputFile);
+    if (!file.is_open()) {
+        throw std::runtime_error("Unable to open file: " + inputFile);
+    }
 
-    auto firstRow = reader.begin();
-    bool hasHeader = firstRow != reader.end() && mightBeHeader(*firstRow);
-
-    if (hasHeader) {
-        columns = reader.get_col_names();
-    } else {
-        // Generate generic column names (Column1, Column2, etc.)
-        for (size_t i = 0; i < firstRow->size(); ++i) {
-            columns.push_back("Column" + std::to_string(i + 1));
+    // Read header
+    std::string line;
+    if (std::getline(file, line)) {
+        std::istringstream headerStream(line);
+        std::string column;
+        while (std::getline(headerStream, column, ',')) {
+            columns.push_back(column);
+            dataMatrix.emplace_back(); // Create a column vector for each header
         }
     }
 
-    dataMatrix.resize(columns.size());
-
-    for (auto& row : reader) {
+    // Read data
+    while (std::getline(file, line)) {
+        std::istringstream lineStream(line);
+        std::string cell;
         size_t columnIndex = 0;
-        for (auto& field : row) {
-            std::optional<DataVariant> value;
-
-            if (field.is_null()) {
-                value = std::nullopt; // Handle blank fields
-            } else if (field.is_int()) {
-                value = field.get<int>();
-            } else if (field.is_float()) {
-                value = field.get<double>();
-            } else {
-                value = field.get<>();
+        while (std::getline(lineStream, cell, ',')) {
+            if (columnIndex < dataMatrix.size()) {
+                dataMatrix[columnIndex].push_back(convert(cell));
+                columnIndex++;
             }
-
-            dataMatrix[columnIndex].push_back(value);
-            columnIndex++;
         }
     }
 }
+
+
+
 
 void Statistics::calculateStatistics() {
     size_t numColumns = dataMatrix.size();
@@ -147,6 +133,19 @@ void Statistics::analyze() {
     loadData();
     calculateStatistics();
     outputResults();
+}
+
+std::optional<Statistics::DataVariant> Statistics::convert(const std::string &str) {
+    if (str.empty()) return std::nullopt;
+
+    char* end;
+    int i = (int) strtol(str.c_str(), &end, 10);
+    if (*end == 0) return i;
+
+    double d = strtod(str.c_str(), &end);
+    if (*end == 0) return d;
+
+    return str;
 }
 
 // More function definitions for statistical operations

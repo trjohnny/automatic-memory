@@ -5,19 +5,6 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 
-include(FetchContent)
-
-# CSV Parser
-FetchContent_Declare(
-        csvparser
-        GIT_REPOSITORY https://github.com/vincentlaucsb/csv-parser.git
-)
-
-FetchContent_MakeAvailable(csvparser)
-
-FetchContent_GetProperties(csvparser)
-set(CSV_PARSER_INCLUDE_DIR ${csvparser_SOURCE_DIR}/single_include)
-
 # Eigen
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 

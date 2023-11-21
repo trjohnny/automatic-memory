@@ -10,7 +10,7 @@
 
 class Statistics {
 public:
-    Statistics(const std::string& inputFile, const std::string& outputFile);
+    Statistics(std::string  inputFile, std::string  outputFile);
     void analyze();
 
 private:
@@ -32,6 +32,7 @@ private:
     Eigen::MatrixXd correlationMatrix;
 
     void loadData();
+    static std::optional<DataVariant> convert(const std::string& str);
     void calculateStatistics();
     void outputResults();
 };
