@@ -107,7 +107,40 @@ void Statistics::calculateStatistics() {
 
 
 void Statistics::outputResults() {
-    // Implementation to output results to outputFile
+    std::ofstream outFile(outputFile);
+    if (!outFile.is_open()) {
+        throw std::runtime_error("Unable to open file: " + outputFile);
+    }
+
+    // Output for Numerical Data
+    outFile << "Numerical Data Statistics:\n";
+    for (size_t i = 0; i < numericalStatistics.size(); ++i) {
+        outFile << columns[i] << ":\n";
+        outFile << "  Mean: " << numericalStatistics[i].mean << "\n";
+        outFile << "  Median: " << numericalStatistics[i].median << "\n";
+        outFile << "  Standard Deviation: " << numericalStatistics[i].stdDev << "\n";
+        outFile << "  Variance: " << numericalStatistics[i].variance << "\n";
+    }
+
+    // Output for Categorical Data
+    outFile << "\nCategorical Data Frequency Counts:\n";
+    for (size_t i = 0; i < categoricalFrequencyCounts.size(); ++i) {
+        outFile << columns[i] << ":\n";
+        for (const auto& pair : categoricalFrequencyCounts[i]) {
+            outFile << "  " << pair.first << ": " << pair.second << "\n";
+        }
+    }
+
+    // Output Correlation Matrix
+    outFile << "\nCorrelation Matrix:\n";
+    for (Eigen::Index i = 0; i < correlationMatrix.rows(); ++i) {
+        for (Eigen::Index j = 0; j < correlationMatrix.cols(); ++j) {
+            outFile << std::setw(10) << std::setprecision(3) << correlationMatrix(i, j) << " ";
+        }
+        outFile << "\n";
+    }
+
+    outFile.close();
 }
 
 void Statistics::analyze() {
