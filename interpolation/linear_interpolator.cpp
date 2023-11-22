@@ -1,6 +1,6 @@
 #include "linear_interpolator.hpp"
 
-double LinearInterpolator::operator()(double x_val) const override {
+double LinearInterpolator::operator()(double x_val) const  {
     if (x_val < x[0] || x_val > x[x.size() - 1]) {
         throw std::out_of_range("Interpolation point out of range");
     }
