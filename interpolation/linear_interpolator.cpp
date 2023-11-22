@@ -1,15 +1,16 @@
 #include "linear_interpolator.hpp"
 
-double LinearInterpolator::operator()(double x_val) const  {
-    if (x_val < x[0] || x_val > x[x.size() - 1]) {
+double LinearInterpolator::operator()(double point) const  {
+    if (point < points[0].x || point > points[points.size() - 1].x) {
         throw std::out_of_range("Interpolation point out of range");
     }
 
-    for (int i = 0; i < x.size() - 1; ++i) {
-        if (x_val >= x[i] && x_val <= x[i + 1]) {
-            double slope = (y[i + 1] - y[i]) / (x[i + 1] - x[i]);
-            return y[i] + slope * (x_val - x[i]);
+    for (int i = 0; i < points.size() - 1; i++) {
+        if (point >= points[i].x && point <= points[i + 1].x) {
+            double slope = (points[i + 1].y - points[i].y) / (points[i + 1].x - points[i].x);
+            return points[i].y + slope * (point - points[i].x);
         }
     }
-    throw std::logic_error("Interpolation failed");
+
+    return 0.0;
 }

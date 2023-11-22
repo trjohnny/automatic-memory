@@ -1,25 +1,22 @@
 #include "polynomial_interpolator.hpp"
 
-PolynomialInterpolator::PolynomialInterpolator(const Eigen::VectorXd& x_vals, const Eigen::VectorXd& y_vals, int degree)
-        : Interpolator(x_vals, y_vals) {
-    if (x.size() <= degree || degree < 0) {
-        throw std::invalid_argument("Invalid polynomial degree");
+double PolynomialInterpolator::operator()(double point) const  {
+
+    if (point < points[0].x || point > points[points.size() - 1].x) {
+        throw std::out_of_range("Interpolation point out of range");
     }
 
-    Eigen::MatrixXd A(x.size(), degree + 1);
-    for (int i = 0; i < x.size(); ++i) {
-        for (int j = 0; j <= degree; ++j) {
-            A(i, j) = pow(x[i], j);
-        }
-    }
-
-    coefficients = A.colPivHouseholderQr().solve(y);
-}
-
-double PolynomialInterpolator::operator()(double x_val) const {
     double result = 0.0;
-    for (int i = 0; i <= coefficients.rows() - 1; ++i) {
-        result += coefficients[i] * pow(x_val, i);
+
+    for (int i = 0; i < points.size(); ++i) {
+        double term = points[i].y;
+        for (int j = 0; j <  points.size(); ++j) {
+            if (j != i) {
+                term *= (point - points[j].x) / (points[i].x - points[j].x);
+            }
+        }
+        result += term;
     }
+
     return result;
 }

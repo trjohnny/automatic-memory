@@ -4,10 +4,10 @@
 
 class LinearInterpolator : public Interpolator {
 public:
-    LinearInterpolator(const Eigen::VectorXd& x_vals, const Eigen::VectorXd& y_vals)
-            : Interpolator(x_vals, y_vals) {}
+    LinearInterpolator(const std::vector<Point>& points)
+            : Interpolator(points) {}
 
-    double operator()(double x_val) const override;
+    double operator()(double point) const override;
 };
 
 #endif
