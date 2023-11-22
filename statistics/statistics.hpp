@@ -1,17 +1,17 @@
 #ifndef STATISTICS_HPP
 #define STATISTICS_HPP
 
-#include <boost/json.hpp>
 #include <Eigen/Dense>
 #include <vector>
 #include <string>
 #include <variant>
 #include <optional>
-#include <map>
+#include <unordered_map>
+#include <unordered_set>
 
 class Statistics {
 public:
-    Statistics(const std::string& inputFile, const std::string& outputFile);
+    Statistics(std::string  inputFile, std::string  outputFile);
     void analyze();
 
 private:
@@ -21,13 +21,22 @@ private:
     std::string inputFile;
     std::string outputFile;
 
+    struct NumericalStats {
+        double mean;
+        double median;
+        double stdDev;
+        double variance;
+    };
+
+    std::vector<NumericalStats> numericalStatistics;
+    std::vector<std::unordered_map<std::string, int>> categoricalFrequencyCounts;
+    std::unordered_set<std::string> numericalColumns;
+    Eigen::MatrixXd correlationMatrix;
+
     void loadData();
+    static std::optional<DataVariant> convert(const std::string& str);
     void calculateStatistics();
     void outputResults();
-    boost::json::value toJSON();
-
-    // Utility functions to convert data to Eigen types
-    Eigen::VectorXd convertToEigenVector(const std::vector<double>& values);
 };
 
 #endif // STATISTICS_HPP
