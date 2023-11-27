@@ -152,5 +152,3 @@ std::optional<Statistics::DataVariant> Statistics::convert(const std::string &st
 
     return str;
 }
-
-// More function definitions for statistical operations
