@@ -83,7 +83,7 @@ void Statistics::calculateStatistics() {
 
     // Calculate correlation matrix (upper triangle only)
     for (size_t i = 0; i < numColumns; ++i) {
-        for (size_t j = i + 1; j < numColumns; ++j) {
+        for (size_t j = i; j < numColumns; ++j) {
             if (!preprocessedNumericalData[i].empty() && !preprocessedNumericalData[j].empty()) {
                 correlationMatrix(i, j) = correlationMatrix(j, i) = gsl_stats_correlation(
                         preprocessedNumericalData[i].data(), 1,
@@ -92,6 +92,14 @@ void Statistics::calculateStatistics() {
             }
         }
     }
+}
+
+std::vector<int> Statistics::getColumnWidths(const std::vector<std::string>& columns) {
+    std::vector<int> widths;
+    for (const auto& col : columns) {
+        widths.push_back(static_cast<int>(col.length()) + 2);  // Additional space for padding
+    }
+    return widths;
 }
 
 
@@ -122,14 +130,44 @@ void Statistics::outputResults() {
         }
     }
 
-    // Output Correlation Matrix
-    outFile << "\nCorrelation Matrix:\n";
+    outFile << "\n\n";
+
+    auto columnWidths = getColumnWidths(columns);
+    int maxRowLabelWidth = *std::max_element(columnWidths.begin(), columnWidths.end());
+
+    // Output column headers
+    outFile << std::setw(maxRowLabelWidth) << std::setfill(' ') << " |";
+    for (size_t i = 0; i < columns.size(); ++i) {
+        if (numericalColumns.find(columns[i]) == numericalColumns.end()) continue;
+        outFile << std::setw(columnWidths[i]-1) << columns[i] << "|";
+    }
+    outFile << "\n";
+
+    // Output horizontal separator with '+' at intersections
+    outFile << std::setfill('-') << std::setw(maxRowLabelWidth) << "+";
+    for (size_t i = 0; i < columns.size(); ++i) {
+        if (numericalColumns.find(columns[i]) == numericalColumns.end()) continue;
+        outFile << std::setw(columnWidths[i]) << std::setfill('-') << "+";
+    }
+    outFile << std::setfill(' ') << "\n";
+
+    // Output rows with row labels
     for (Eigen::Index i = 0; i < correlationMatrix.rows(); ++i) {
+        if (numericalColumns.find(columns[i]) == numericalColumns.end()) continue;
+        outFile << std::setw(maxRowLabelWidth - 1) << columns[i] << "|";
         for (Eigen::Index j = 0; j < correlationMatrix.cols(); ++j) {
-            outFile << std::setw(10) << std::setprecision(3) << correlationMatrix(i, j) << " ";
+            if (numericalColumns.find(columns[j]) == numericalColumns.end()) continue;
+            outFile << std::setw(columnWidths[j] - 1) << std::setprecision(3) << correlationMatrix(i, j) << "|";
         }
         outFile << "\n";
     }
+
+    outFile << std::setfill('-') << std::setw(maxRowLabelWidth) << "+";
+    for (size_t i = 0; i < columns.size(); ++i) {
+        if (numericalColumns.find(columns[i]) == numericalColumns.end()) continue;
+        outFile << std::setw(columnWidths[i]) << std::setfill('-') << "+";
+    }
+    outFile << std::setfill(' ') << "\n";
 
     outFile.close();
 }

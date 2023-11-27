@@ -35,6 +35,7 @@ private:
 
     void loadData();
     static std::optional<DataVariant> convert(const std::string& str);
+    static std::vector<int> getColumnWidths(const std::vector<std::string>& columns);
     void calculateStatistics();
     void outputResults();
 };
