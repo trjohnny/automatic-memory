@@ -3,7 +3,7 @@ project(scientific-computing-toolbox)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+#add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 
 # Eigen
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)

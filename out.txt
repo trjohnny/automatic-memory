@@ -1,0 +1,66 @@
+Numerical Data Statistics:
+longitude:
+  Mean: -119.57
+  Median: -118.49
+  Standard Deviation: 2.00353
+  Variance: 4.01414
+latitude:
+  Mean: 35.6319
+  Median: 34.26
+  Standard Deviation: 2.13595
+  Variance: 4.56229
+housing_median_age:
+  Mean: 28.6395
+  Median: 29
+  Standard Deviation: 12.5856
+  Variance: 158.396
+total_rooms:
+  Mean: 2635.76
+  Median: 2127
+  Standard Deviation: 2181.62
+  Variance: 4.75945e+06
+total_bedrooms:
+  Mean: 537.871
+  Median: 435
+  Standard Deviation: 421.385
+  Variance: 177565
+population:
+  Mean: 1425.48
+  Median: 1166
+  Standard Deviation: 1132.46
+  Variance: 1.28247e+06
+households:
+  Mean: 499.54
+  Median: 409
+  Standard Deviation: 382.33
+  Variance: 146176
+median_income:
+  Mean: 3.87067
+  Median: 3.5348
+  Standard Deviation: 1.89982
+  Variance: 3.60932
+median_house_value:
+  Mean: 206856
+  Median: 179700
+  Standard Deviation: 115396
+  Variance: 1.33161e+10
+
+Categorical Data Frequency Counts:
+ocean_proximity:
+  NEAR OCEAN: 2658
+  ISLAND: 5
+  INLAND: 6551
+  <1H OCEAN: 9136
+  NEAR BAY: 2290
+
+Correlation Matrix:
+       nan      0.891      0.961      0.723      0.673      0.738      0.755       0.86      0.879        nan 
+     0.891        nan      0.946       0.81      0.749       0.82       0.84      0.919      0.941        nan 
+     0.961      0.946        nan      0.787      0.774      0.801      0.822      0.922      0.963        nan 
+     0.723       0.81      0.787        nan      0.646      0.992      0.998      0.957      0.864        nan 
+     0.673      0.749      0.774      0.646        nan      0.965      0.964      0.933      0.898        nan 
+     0.738       0.82      0.801      0.992      0.965        nan       0.99      0.954      0.873        nan 
+     0.755       0.84      0.822      0.998      0.964       0.99        nan      0.973      0.895        nan 
+      0.86      0.919      0.922      0.957      0.933      0.954      0.973        nan      0.962        nan 
+     0.879      0.941      0.963      0.864      0.898      0.873      0.895      0.962        nan        nan 
+       nan        nan        nan        nan        nan        nan        nan        nan        nan        nan 
