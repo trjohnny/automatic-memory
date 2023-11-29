@@ -3,10 +3,13 @@
 CardinalCubicBSplineInterpolator::CardinalCubicBSplineInterpolator(const std::vector<Point>& points)
         : Interpolator(points) {
 
+    if (points.size() < 5)
+        throw std::invalid_argument("At least five points are needed to perform the Cardinal Cubic interpolation");
+
     double distance = points[1].x - points[0].x;
     std::vector<double> function_values {points[0].y, points[1].y};
 
-    for (int i = 2; i < points.size(); i++) {
+    for (int i = 2; i < (int)points.size(); i++) {
         if (points[i].x - points[i - 1].x != distance) {
             throw std::invalid_argument("Points do not have equal distance");
         }

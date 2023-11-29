@@ -8,9 +8,9 @@ double PolynomialInterpolator::operator()(double point) const  {
 
     double result = 0.0;
 
-    for (int i = 0; i < points.size(); ++i) {
+    for (int i = 0; i < (int)points.size(); ++i) {
         double term = points[i].y;
-        for (int j = 0; j <  points.size(); ++j) {
+        for (int j = 0; j <  (int)points.size(); ++j) {
             if (j != i) {
                 term *= (point - points[j].x) / (points[i].x - points[j].x);
             }

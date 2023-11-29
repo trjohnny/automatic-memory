@@ -5,7 +5,7 @@ double LinearInterpolator::operator()(double point) const  {
         throw std::out_of_range("Interpolation point out of range");
     }
 
-    for (int i = 0; i < points.size() - 1; i++) {
+    for (int i = 0; i < (int)points.size() - 1; i++) {
         if (point >= points[i].x && point <= points[i + 1].x) {
             double slope = (points[i + 1].y - points[i].y) / (points[i + 1].x - points[i].x);
             return points[i].y + slope * (point - points[i].x);
