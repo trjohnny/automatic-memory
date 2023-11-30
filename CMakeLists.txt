@@ -4,15 +4,14 @@ project(scientific-computing-toolbox)
 set(CMAKE_CXX_STANDARD 17)
 
 
-set(EIGEN_DIR "../eigen-3.3.9")
+set(EIGEN_DIR "include/eigen-3.4.0")
 include_directories(${EIGEN_DIR})
-set(BOOST_DIR "../boost_1_83_0")
+set(BOOST_DIR "include/boost-1.83.0")
 include_directories(${BOOST_DIR})
-set(GSL_DIR "../gsl-2.7.1")
-include_directories(${GSL_DIR})
-
-set(MU_PARSER_DIR "../muparser-2.3.4")
+set(MU_PARSER_DIR "include/muparser-2.3.4")
 include_directories(${MU_PARSER_DIR})
+
+add_subdirectory("include/muparser-2.3.4")
 
 add_executable(exec_target main.cpp)
 
@@ -24,9 +23,19 @@ add_library(interpolators SHARED
         interpolation/polynomial_interpolator.cpp
 )
 
+# Add interpolators library
+add_library(statistics SHARED
+        statistics/stats.cpp
+)
+
 # Include directories for interpolators library
 target_include_directories(interpolators PUBLIC ${BOOST_DIR})
 target_include_directories(interpolators PUBLIC ${EIGEN_DIR})
 
+target_include_directories(statistics PUBLIC ${EIGEN_DIR})
+
+target_include_directories(exec_target PUBLIC ${MU_PARSER_DIR})
+
+
 # Link the interpolators library to main executable
-target_link_libraries(exec_target PRIVATE interpolators)
+target_link_libraries(exec_target PRIVATE interpolators statistics muparser)
