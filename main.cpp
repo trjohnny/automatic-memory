@@ -5,7 +5,7 @@
 #include <iostream>
 #include <string>
 #include <exception>
-#include "muparser/include/muParser.h"
+#include "include/muParser.h"
 #include <map>
 
 /*
@@ -144,7 +144,7 @@ int main() {
     while (true) {
         std::cout << "Options:\n";
         std::cout << "1. Initialize Interpolation Function\n";
-        std::cout << "2. Initialize Interpolator Dataset\n";
+        std::cout << "2. Initialize Interpolator dataset\n";
         std::cout << "3. Calculate Interpolation on a Specified Point\n";
         std::cout << "4. Run Base Tests for Interpolators\n";
         std::cout << "5. Exit\n";

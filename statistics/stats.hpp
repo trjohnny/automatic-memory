@@ -1,14 +1,9 @@
 //
 // Created by Giovanni Coronica on 29/11/23.
 //
-#include <string>
+
 #include <set>
-#include <unordered_map>
 #include <map>
-#include <optional>
-#include <variant>
-#include <vector>
-#include <string>
 #include "Eigen/Core"
 
 #ifndef STATS_HPP
@@ -16,9 +11,9 @@
 
 namespace Stats {
 
-    class Dataset;
+    class dataset;
 
-    std::unique_ptr<Dataset> read_csv(const std::string& path);
+    std::unique_ptr<dataset> read_csv(const std::string& input_file);
 
     template<typename T>
     static double median(const std::vector<std::optional<T>>& data);
@@ -35,88 +30,88 @@ namespace Stats {
     template<typename T>
     static double mean(const std::vector<std::optional<T>>& data);
 
-    class Dataset {
+    class dataset {
     public:
-        using DataVariant = std::variant<int, double, std::string>;
-        using DataRow = std::vector<std::optional<DataVariant>>;
-        using DataMatrix = std::vector<DataRow>;
+        using data_variant = std::variant<int, double, std::string>;
+        using data_row = std::vector<std::optional<data_variant>>;
+        using matrix = std::vector<data_row>;
 
-        struct ColumnStats {
+        struct column_stat {
             size_t col_index;
             std::optional<double> mean;
-            std::optional<double> stdDev;
+            std::optional<double> std_dev;
             std::optional<double> median;
             std::optional<double> variance;
-            std::optional<std::map<std::string, int>> frequencyCount;
+            std::optional<std::map<std::string, int>> frequency_count;
         };
 
-        class Iterator {
+        class iterator {
         public:
-            Iterator(typename DataMatrix::iterator it) : current(it) {}
+            explicit iterator(typename matrix::iterator it) : current(it) {}
 
-            Iterator& operator++() {
+            iterator& operator++() {
                 ++current;
                 return *this;
             }
 
-            bool operator!=(const Iterator& other) const {
+            bool operator!=(const iterator& other) const {
                 return current != other.current;
             }
 
-            const DataRow& operator*() const {
+            const data_row& operator*() const {
                 return *current;
             }
 
         private:
-            typename DataMatrix::iterator current;
+            typename matrix::iterator current;
         };
 
-        Dataset(std::vector<std::string> cols, DataMatrix matrix, std::set<size_t> numCols, std::set<size_t> catCols)
-        : dataMatrix(std::move(matrix)), columns(std::move(cols)), numericalColumns(std::move(numCols)), categoricalColumns(std::move(catCols)) {
+        dataset(std::vector<std::string> cols, matrix matrix, std::set<size_t> numCols, std::set<size_t> catCols)
+        : data_matrix(std::move(matrix)), columns(std::move(cols)), numerical_columns(std::move(numCols)), categorical_columns(std::move(catCols)) {
             for (size_t colIdx = 0; colIdx < columns.size(); ++colIdx) {
-                columnStats[columns[colIdx]] = ColumnStats{
+                column_statistics[columns[colIdx]] = column_stat{
                     .col_index = colIdx
                 };
             }
         }
 
-        double getMean(const std::string& columnName);
-        double getStdDev(const std::string& columnName);
-        double getMedian(const std::string& columnName);
-        double getVariance(const std::string& columnName);
-        std::map<std::string, int> getFrequencyCount(const std::string& columnName);
+        double get_mean(const std::string& column_name);
+        double get_std_dev(const std::string& column_name);
+        double get_median(const std::string& column_name);
+        double get_variance(const std::string& column_name);
+        std::map<std::string, int> get_frequency_count(const std::string& column_name);
         Eigen::MatrixXd getCorrelationMatrix();
-        void output_statistics(const std::string& path_to_file);
+        void output_statistics(const std::string& output_file);
 
-        Iterator begin() {
-            return Iterator(dataMatrix.begin());
+        auto begin() {
+            return data_matrix.begin();
         }
 
-        Iterator end() {
-            return Iterator(dataMatrix.end());
+        auto end() {
+            return data_matrix.end();
         }
 
     private:
-        DataMatrix dataMatrix;
+        matrix data_matrix;
         std::vector<std::string> columns;
-        std::unordered_map<std::string, ColumnStats> columnStats;
-        std::optional<Eigen::MatrixXd> correlationMatrix;
-        std::set<size_t> numericalColumns;
-        std::set<size_t> categoricalColumns;
+        std::unordered_map<std::string, column_stat> column_statistics;
+        std::optional<Eigen::MatrixXd> correlation_matrix;
+        std::set<size_t> numerical_columns;
+        std::set<size_t> categorical_columns;
 
         // Helper methods to calculate statistics
-        void calculateStatistics();
-        void calculateMean(const std::string& columnName);
-        void calculateStdDev(const std::string& columnName);
-        void calculateMedian(const std::string& columnName);
-        void calculateVariance(const std::string& columnName);
-        void calculateFrequencyCount(const std::string& columnName); // For frequency count
-        void calculateCorrelationMatrix();
+        void calculate_statistics();
+        void calculate_mean(const std::string& column_name);
+        void calculate_std_dev(const std::string& column_name);
+        void calculate_median(const std::string& column_name);
+        void calculate_variance(const std::string& column_name);
+        void calculate_frequency_count(const std::string& column_name); // For frequency count
+        void calculate_correlation_matrix();
 
-        std::map<std::string, int> extractCategoricalColumnData(size_t colIndex);
-        std::vector<std::optional<double>> extractNumericalColumnData(size_t colIndex);
+        std::map<std::string, int> extract_categorical_column_data(size_t colIndex);
+        std::vector<std::optional<double>> extract_numerical_column_data(size_t colIndex);
 
-        std::vector<int> getWidth(const std::vector<std::string>& vector) {
+        static std::vector<int> get_width(const std::vector<std::string>& vector) {
             std::vector<int> widths;
             for (const auto& col : vector) {
                 widths.push_back(static_cast<int>(col.length()) + 2);  // Additional space for padding
@@ -126,7 +121,7 @@ namespace Stats {
 
     };
 
-    static std::optional<Dataset::DataVariant> convert(const std::string &str) {
+    static std::optional<dataset::data_variant> convert(const std::string &str) {
         if (str.empty()) return std::nullopt;
 
         char* end;
