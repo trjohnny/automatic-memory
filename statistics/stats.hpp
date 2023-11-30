@@ -9,7 +9,7 @@
 #ifndef STATS_HPP
 #define STATS_HPP
 
-namespace Stats {
+namespace scitool {
 
     class dataset;
 
@@ -80,7 +80,7 @@ namespace Stats {
         double get_median(const std::string& column_name);
         double get_variance(const std::string& column_name);
         std::map<std::string, int> get_frequency_count(const std::string& column_name);
-        Eigen::MatrixXd getCorrelationMatrix();
+        Eigen::MatrixXd get_correlation_matrix();
         void output_statistics(const std::string& output_file);
 
         auto begin() {
@@ -109,7 +109,7 @@ namespace Stats {
         void calculate_correlation_matrix();
 
         std::map<std::string, int> extract_categorical_column_data(size_t colIndex);
-        std::vector<std::optional<double>> extract_numerical_column_data(size_t colIndex);
+        std::vector<std::optional<double>> extract_numerical_column_data(size_t col_index);
 
         static std::vector<int> get_width(const std::vector<std::string>& vector) {
             std::vector<int> widths;
@@ -134,6 +134,6 @@ namespace Stats {
         return str;
     }
 
-} // Stats
+} // scitool
 
 #endif //STATS_HPP
