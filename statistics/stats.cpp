@@ -103,8 +103,6 @@ namespace scitool {
         return std::sqrt(sq_sum / static_cast<double>(count));
     }
 
-
-
     template<typename T>
     static double variance(const std::vector<std::optional<T>>& data) {
         if (data.empty()) {
@@ -115,7 +113,6 @@ namespace scitool {
 
         return std_dev * std_dev;
     }
-
 
     template<typename T>
     static double correlation(const std::vector<std::optional<T>>& data1, const std::vector<std::optional<T>>& data2) {
@@ -398,6 +395,4 @@ namespace scitool {
 
         correlation_matrix.emplace(matrix_xd);
     }
-
-
 }
