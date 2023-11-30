@@ -3,7 +3,6 @@ project(scientific-computing-toolbox)
 
 set(CMAKE_CXX_STANDARD 17)
 
-#add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 
 set(EIGEN_DIR "../eigen-3.3.9")
 include_directories(${EIGEN_DIR})
@@ -11,6 +10,10 @@ set(BOOST_DIR "../boost_1_83_0")
 include_directories(${BOOST_DIR})
 set(GSL_DIR "../gsl-2.7.1")
 include_directories(${GSL_DIR})
+
+set(MU_PARSER_DIR "../muparser-2.3.4")
+include_directories(${MU_PARSER_DIR})
+
 add_executable(exec_target main.cpp)
 
 # Add interpolators library
