@@ -2,8 +2,8 @@
 #include "interpolation/linear_interpolator.hpp"
 #include "interpolation/polynomial_interpolator.hpp"
 #include "interpolation/cardinal_cubic_bspline_Interpolator.hpp"
-#include "statistics/stats.hpp"
-#include "include/muParser.h"
+#include "statistics/stat_utils.hpp"
+#include "statistics/dataset.hpp"
 #include <map>
 
 std::vector<scitool::point> generate_points(const std::function<double(double)>& function, double start, double end, double increment) {
@@ -194,7 +194,7 @@ void handle_statistics_module() {
     std::string csv_file_path, outputFilePath, column_name;
     std::unique_ptr<scitool::dataset> ds;
     int choice;
-    bool fileLoaded = false;
+    bool file_loaded = false;
 
     while (true) {
         std::cout << "\nStatistics Module:\n";
@@ -209,12 +209,17 @@ void handle_statistics_module() {
             case 1: {
                 std::cout << "Enter the path to the CSV file: ";
                 std::cin >> csv_file_path;
-                ds = scitool::read_csv(csv_file_path);
-                fileLoaded = true; // Set to true if file is successfully loaded
+                try {
+                    ds = scitool::dataset::from_csv(csv_file_path);
+                } catch (std::invalid_argument& e) {
+                    std::cout << "Invalid input. The file does not exist." << std::endl;
+                    break;
+                }
+                file_loaded = true; // Set to true if file is successfully loaded
                 break;
             }
             case 2: {
-                if (!fileLoaded) {
+                if (!file_loaded) {
                     std::cout << "Please load a CSV file first.\n";
                     break;
                 }
@@ -228,10 +233,10 @@ void handle_statistics_module() {
                     double std_dev = ds->get_std_dev(column_name);
                     double variance = ds->get_variance(column_name);
 
-                    std::cout << " - Mean = " << mean << std::endl;
-                    std::cout << " - Median = " << median << std::endl;
-                    std::cout << " - Standard deviation = " << std_dev << std::endl;
-                    std::cout << " - Variance = " << variance << std::endl;
+                    std::cout << "  Mean = " << mean << std::endl;
+                    std::cout << "  Median = " << median << std::endl;
+                    std::cout << "  Standard deviation = " << std_dev << std::endl;
+                    std::cout << "  Variance = " << variance << std::endl;
                 }
                 else
                 {
@@ -244,7 +249,7 @@ void handle_statistics_module() {
                 break;
             }
             case 3: {
-                if (!fileLoaded) {
+                if (!file_loaded) {
                     std::cout << "Please load a CSV file first.\n";
                     break;
                 }

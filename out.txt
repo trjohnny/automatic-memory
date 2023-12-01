@@ -2,67 +2,67 @@ Numerical Data Statistics:
 longitude:
   Mean: -119.57
   Median: -118.49
-  Standard Deviation: 2.00353
-  Variance: 4.01414
+  Standard Deviation: 2.00348
+  Variance: 4.01394
 latitude:
   Mean: 35.6319
   Median: 34.26
-  Standard Deviation: 2.13595
-  Variance: 4.56229
+  Standard Deviation: 2.1359
+  Variance: 4.56207
 housing_median_age:
   Mean: 28.6395
   Median: 29
-  Standard Deviation: 12.5856
-  Variance: 158.396
+  Standard Deviation: 12.5853
+  Variance: 158.389
 total_rooms:
   Mean: 2635.76
   Median: 2127
-  Standard Deviation: 2181.62
-  Variance: 4.75945e+06
+  Standard Deviation: 2181.56
+  Variance: 4.75921e+06
 total_bedrooms:
   Mean: 537.871
-  Median: 435
-  Standard Deviation: 421.385
-  Variance: 177565
+  Median: 431
+  Standard Deviation: 421.375
+  Variance: 177557
 population:
   Mean: 1425.48
   Median: 1166
-  Standard Deviation: 1132.46
-  Variance: 1.28247e+06
+  Standard Deviation: 1132.43
+  Variance: 1.28241e+06
 households:
   Mean: 499.54
   Median: 409
-  Standard Deviation: 382.33
-  Variance: 146176
+  Standard Deviation: 382.32
+  Variance: 146169
 median_income:
   Mean: 3.87067
   Median: 3.5348
-  Standard Deviation: 1.89982
-  Variance: 3.60932
+  Standard Deviation: 1.89978
+  Variance: 3.60915
 median_house_value:
   Mean: 206856
   Median: 179700
-  Standard Deviation: 115396
-  Variance: 1.33161e+10
+  Standard Deviation: 115393
+  Variance: 1.33155e+10
 
 Categorical Data Frequency Counts:
 ocean_proximity:
-  NEAR OCEAN: 2658
-  ISLAND: 5
-  INLAND: 6551
   <1H OCEAN: 9136
+  INLAND: 6551
+  ISLAND: 5
   NEAR BAY: 2290
+  NEAR OCEAN: 2658
 
 
                    | longitude| latitude| housing_median_age| total_rooms| total_bedrooms| population| households| median_income| median_house_value|
 -------------------+----------+---------+-------------------+------------+---------------+-----------+-----------+--------------+-------------------+
-          longitude|      4.01|     3.81|               24.2|    3.16e+03|       1.53e+03|   1.67e+03|        578|          3.27|           2.03e+05|
-           latitude|      3.81|     4.56|               25.4|    3.78e+03|       2.01e+03|   1.98e+03|        686|          3.73|           2.32e+05|
- housing_median_age|      24.2|     25.4|                158|    2.16e+04|       9.91e+03|   1.14e+04|   3.96e+03|            22|            1.4e+06|
-        total_rooms|  3.16e+03| 3.78e+03|           2.16e+04|    4.76e+06|       3.77e+06|   2.45e+06|   8.32e+05|      3.97e+03|           2.18e+08|
-     total_bedrooms|  1.53e+03| 2.01e+03|           9.91e+03|    3.77e+06|       1.78e+05|   3.54e+05|   1.23e+05|           661|           4.24e+07|
-         population|  1.67e+03| 1.98e+03|           1.14e+04|    2.45e+06|       3.54e+05|   1.28e+06|   4.29e+05|      2.05e+03|           1.14e+08|
-         households|       578|      686|           3.96e+03|    8.32e+05|       1.23e+05|   4.29e+05|   1.46e+05|           707|           3.95e+07|
-      median_income|      3.27|     3.73|                 22|    3.97e+03|            661|   2.05e+03|        707|          3.61|           2.11e+05|
- median_house_value|  2.03e+05| 2.32e+05|            1.4e+06|    2.18e+08|       4.24e+07|   1.14e+08|   3.95e+07|      2.11e+05|           1.33e+10|
+          longitude|         1|   -0.925|             -0.108|      0.0446|         0.0696|     0.0998|     0.0553|       -0.0152|             -0.046|
+           latitude|    -0.925|        1|             0.0112|     -0.0361|         -0.067|     -0.109|     -0.071|       -0.0798|             -0.144|
+ housing_median_age|    -0.108|   0.0112|                  1|      -0.361|          -0.32|     -0.296|     -0.303|        -0.119|              0.106|
+        total_rooms|    0.0446|  -0.0361|             -0.361|           1|           0.93|      0.857|      0.918|         0.198|              0.134|
+     total_bedrooms|    0.0696|   -0.067|              -0.32|        0.93|              1|      0.878|       0.98|      -0.00772|             0.0497|
+         population|    0.0998|   -0.109|             -0.296|       0.857|          0.878|          1|      0.907|       0.00483|            -0.0246|
+         households|    0.0553|   -0.071|             -0.303|       0.918|           0.98|      0.907|          1|         0.013|             0.0658|
+      median_income|   -0.0152|  -0.0798|             -0.119|       0.198|       -0.00772|    0.00483|      0.013|             1|              0.688|
+ median_house_value|    -0.046|   -0.144|              0.106|       0.134|         0.0497|    -0.0246|     0.0658|         0.688|                  1|
 -------------------+----------+---------+-------------------+------------+---------------+-----------+-----------+--------------+-------------------+

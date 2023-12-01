@@ -1,13 +1,19 @@
-#include "stats.hpp"
+//
+// Created by Giovanni Coronica on 01/12/23.
+//
+
+#include "stat_utils.cpp"
+#include "dataset.hpp"
 #include <fstream>
-#include <numeric>
+#include <memory>
+#include <iomanip>
 
 namespace scitool {
 
-    std::unique_ptr<dataset> read_csv(const std::string& input_file) {
+    std::unique_ptr<dataset> dataset::from_csv(const std::string& input_file) {
         std::ifstream file(input_file);
         if (!file.is_open()) {
-            throw std::runtime_error("Unable to open file: " + input_file);
+            throw std::invalid_argument("Unable to open file: " + input_file);
         }
 
         std::vector<std::string> columns;
@@ -35,7 +41,7 @@ namespace scitool {
 
             while (std::getline(line_stream, cell, ',')) {
                 // Convert string to data_variant
-                auto data_variant = convert(cell);
+                auto data_variant = dataset::convert(cell);
                 data_row.push_back(data_variant);
 
                 // On first row, determine if the column is numerical
@@ -56,104 +62,6 @@ namespace scitool {
 
         return std::make_unique<dataset>(std::move(columns), std::move(data_matrix),
                                          std::move(numerical_columns), std::move(categorical_columns));
-    }
-
-    template<typename T>
-    static double median(const std::vector<std::optional<T>>& data) { // Note: pass by value
-        if (data.empty()) {
-            throw std::runtime_error("Cannot compute median of an empty vector");
-        }
-
-        std::vector<std::optional<T>> sorted_data = data;
-
-        std::sort(sorted_data.begin(), sorted_data.end());
-
-        size_t n = sorted_data.size();
-        size_t mid = n / 2;
-
-        return n % 2 == 0 ? (sorted_data[mid].value() + sorted_data[mid - 1].value()) / 2.0 : sorted_data[mid].value();
-    }
-
-
-    template<typename T>
-    static double std_dev(const std::vector<std::optional<T>>& data) {
-        if (data.empty()) {
-            throw std::runtime_error("Cannot compute standard deviation of an empty vector");
-        }
-
-        // Calculate mean, excluding std::nullopt elements
-        double sum = 0.0;
-        size_t count = 0;
-        for (const auto& opt_val : data) {
-            if (opt_val) {
-                sum += static_cast<double>(*opt_val);
-                ++count;
-            }
-        }
-        if (count == 0) {
-            throw std::runtime_error("Cannot compute standard deviation with all values missing");
-        }
-        double data_mean = sum / static_cast<double>(count);
-
-        // Calculate squared sum of differences from the mean
-        double sq_sum = std::accumulate(data.begin(), data.end(), 0.0,
-                                        [data_mean](double acc, const std::optional<T>& opt_val) {
-                                            return opt_val ? acc + (static_cast<double>(*opt_val) - data_mean) * (static_cast<double>(*opt_val) - data_mean) : acc;
-                                        });
-        return std::sqrt(sq_sum / static_cast<double>(count));
-    }
-
-    template<typename T>
-    static double variance(const std::vector<std::optional<T>>& data) {
-        if (data.empty()) {
-            throw std::runtime_error("Cannot compute variance of an empty vector");
-        }
-
-        double std_dev = scitool::std_dev(data);
-
-        return std_dev * std_dev;
-    }
-
-    template<typename T>
-    static double correlation(const std::vector<std::optional<T>>& data1, const std::vector<std::optional<T>>& data2) {
-        if (data1.empty() || data1.size() != data2.size()) {
-            throw std::runtime_error("Cannot compute correlation of vectors with unequal size or empty vectors");
-        }
-
-        double mean1 = mean(data1);
-        double mean2 = mean(data2);
-        double sum_xx = 0, sum_yy = 0, sum_xy = 0;
-
-        for (size_t i = 0; i < data1.size(); ++i) {
-            if (!data1[i] || !data2[i]) continue;
-            sum_xx += (data1[i].value() - mean1) * (data1[i].value() - mean1);
-            sum_yy += (data2[i].value() - mean2) * (data2[i].value() - mean2);
-            sum_xy += (data1[i].value() - mean1) * (data2[i].value() - mean2);
-        }
-
-        return sum_xy / (std::sqrt(sum_xx) * std::sqrt(sum_yy));
-    }
-
-    template<typename T>
-    static double mean(const std::vector<std::optional<T>>& data) {
-        if (data.empty()) {
-            throw std::runtime_error("Cannot compute mean of an empty vector");
-        }
-
-        double sum = 0.0;
-        size_t count = 0;
-        for (const auto& optVal : data) {
-            if (optVal) {
-                sum += static_cast<double>(*optVal);
-                ++count;
-            }
-        }
-
-        if (count == 0) {
-            throw std::runtime_error("Cannot compute mean with all values missing");
-        }
-
-        return sum / static_cast<double>(count);
     }
 
     void dataset::calculate_statistics() {
@@ -400,4 +308,17 @@ namespace scitool {
         auto& col_stats = column_statistics[column_name];
         return std::find(categorical_columns.begin(), categorical_columns.end(), col_stats.col_index) != categorical_columns.end();
     }
-}
+
+    std::optional<dataset::data_variant> dataset::convert(const std::string &str) {
+        if (str.empty()) return std::nullopt;
+
+        char* end;
+        int i = (int) strtol(str.c_str(), &end, 10);
+        if (*end == 0) return i;
+
+        double d = strtod(str.c_str(), &end);
+        if (*end == 0) return d;
+
+        return str;
+    }
+} // scitool

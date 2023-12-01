@@ -1,34 +1,17 @@
 //
-// Created by Giovanni Coronica on 29/11/23.
+// Created by Giovanni Coronica on 01/12/23.
 //
-
+#include "stat_utils.hpp"
 #include <set>
 #include <map>
+#include <optional>
+#include <variant>
 #include "Eigen/Core"
 
-#ifndef STATS_HPP
-#define STATS_HPP
+#ifndef SCIENTIFIC_COMPUTING_TOOLBOX_DATASET_HPP
+#define SCIENTIFIC_COMPUTING_TOOLBOX_DATASET_HPP
 
 namespace scitool {
-
-    class dataset;
-
-    std::unique_ptr<dataset> read_csv(const std::string& input_file);
-
-    template<typename T>
-    static double median(const std::vector<std::optional<T>>& data);
-
-    template<typename T>
-    static double std_dev(const std::vector<std::optional<T>>& data);
-
-    template<typename T>
-    static double variance(const std::vector<std::optional<T>>& data);
-
-    template<typename T>
-    static double correlation(const std::vector<std::optional<T>>& data1, const std::vector<std::optional<T>>& data2);
-
-    template<typename T>
-    static double mean(const std::vector<std::optional<T>>& data);
 
     class dataset {
     public:
@@ -67,13 +50,15 @@ namespace scitool {
         };
 
         dataset(std::vector<std::string> cols, matrix matrix, std::set<size_t> numCols, std::set<size_t> catCols)
-        : data_matrix(std::move(matrix)), columns(std::move(cols)), numerical_columns(std::move(numCols)), categorical_columns(std::move(catCols)) {
+                : data_matrix(std::move(matrix)), columns(std::move(cols)), numerical_columns(std::move(numCols)), categorical_columns(std::move(catCols)) {
             for (size_t colIdx = 0; colIdx < columns.size(); ++colIdx) {
                 column_statistics[columns[colIdx]] = column_stat{
-                    .col_index = colIdx
+                        .col_index = colIdx
                 };
             }
         }
+
+        static std::unique_ptr<dataset> from_csv(const std::string& input_file);
 
         bool is_categorical(const std::string& column_name);
 
@@ -114,6 +99,7 @@ namespace scitool {
         std::map<std::string, int> extract_categorical_column_data(size_t colIndex);
         std::vector<std::optional<double>> extract_numerical_column_data(size_t col_index);
 
+        static std::optional<dataset::data_variant> convert(const std::string &str);
         static std::vector<int> get_width(const std::vector<std::string>& vector) {
             std::vector<int> widths;
             for (const auto& col : vector) {
@@ -124,19 +110,6 @@ namespace scitool {
 
     };
 
-    std::optional<dataset::data_variant> convert(const std::string &str) {
-        if (str.empty()) return std::nullopt;
-
-        char* end;
-        int i = (int) strtol(str.c_str(), &end, 10);
-        if (*end == 0) return i;
-
-        double d = strtod(str.c_str(), &end);
-        if (*end == 0) return d;
-
-        return str;
-    }
-
 } // scitool
 
-#endif //STATS_HPP
+#endif //SCIENTIFIC_COMPUTING_TOOLBOX_DATASET_HPP

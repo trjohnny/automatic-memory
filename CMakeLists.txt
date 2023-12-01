@@ -6,13 +6,8 @@ set(CMAKE_CXX_STANDARD 17)
 add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 
 set(EIGEN_DIR "include/eigen-3.4.0")
-include_directories(${EIGEN_DIR})
 set(BOOST_DIR "include/boost-1.83.0")
-include_directories(${BOOST_DIR})
-set(MU_PARSER_DIR "include/muparser-2.3.4")
-include_directories(${MU_PARSER_DIR})
-
-add_subdirectory("include/muparser-2.3.4")
+include_directories(${EIGEN_DIR} ${BOOST_DIR})
 
 add_executable(exec_target main.cpp)
 
@@ -26,17 +21,17 @@ add_library(interpolators SHARED
 
 # Add interpolators library
 add_library(statistics SHARED
-        statistics/stats.cpp
+        statistics/stat_utils.cpp
+        statistics/dataset.cpp
+        statistics/dataset.hpp
+        statistics/dataset.cpp
+        statistics/dataset.hpp
 )
 
 # Include directories for interpolators library
-target_include_directories(interpolators PUBLIC ${BOOST_DIR})
-target_include_directories(interpolators PUBLIC ${EIGEN_DIR})
-
+target_include_directories(interpolators PUBLIC ${BOOST_DIR} ${EIGEN_DIR})
 target_include_directories(statistics PUBLIC ${EIGEN_DIR})
-
-target_include_directories(exec_target PUBLIC ${MU_PARSER_DIR})
 
 
 # Link the interpolators library to main executable
-target_link_libraries(exec_target PRIVATE interpolators statistics muparser)
+target_link_libraries(exec_target PRIVATE interpolators statistics)
