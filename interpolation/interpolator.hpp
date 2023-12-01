@@ -1,10 +1,8 @@
 #ifndef INTERPOLATOR_HPP
 #define INTERPOLATOR_HPP
 
-#include <vector>
-#include <iostream>
 #include <algorithm>
-
+#include <vector>
 
 
 struct Point {
@@ -18,6 +16,8 @@ protected:
 
 public:
     Interpolator(const std::vector<Point>&);
+    virtual ~Interpolator() = default;
+
     virtual double operator()(double x_val) const = 0;
 };
 
