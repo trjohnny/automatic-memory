@@ -2,9 +2,7 @@
 #include "interpolation/linear_interpolator.hpp"
 #include "interpolation/polynomial_interpolator.hpp"
 #include "interpolation/cardinal_cubic_bspline_Interpolator.hpp"
-#include <iostream>
-#include <string>
-#include <exception>
+#include "statistics/stats.hpp"
 #include "include/muParser.h"
 #include <map>
 
@@ -114,7 +112,7 @@ std::vector<scitool::point> get_user_defined_points() {
     return user_points;
 }
 
-int main() {
+void handle_interpolator_module() {
     std::map<std::string, std::unique_ptr<scitool::interpolator>> interpolators;
 
     mu::Parser interpolation_function;
@@ -188,12 +186,113 @@ int main() {
             }
             case 5: {
                 std::cout << "Exiting...\n";
-                return 0;
+                return;
             }
             default: {
                 std::cout << "Invalid choice. Please enter a valid option.\n";
                 break;
             }
+        }
+    }
+}
+
+void handle_statistics_module() {
+    std::string csv_file_path, outputFilePath, column_name;
+    std::unique_ptr<scitool::dataset> ds;
+    int choice;
+    bool fileLoaded = false;
+
+    while (true) {
+        std::cout << "\nStatistics Module:\n";
+        std::cout << "1. Select CSV File\n";
+        std::cout << "2. Statistical Info of a Column\n";
+        std::cout << "3. Output Stats to File\n";
+        std::cout << "4. Return to Main Menu\n";
+        std::cout << "Enter your choice: ";
+        std::cin >> choice;
+
+        switch (choice) {
+            case 1: {
+                std::cout << "Enter the path to the CSV file: ";
+                std::cin >> csv_file_path;
+                ds = scitool::read_csv(csv_file_path);
+                fileLoaded = true; // Set to true if file is successfully loaded
+                break;
+            }
+            case 2: {
+                if (!fileLoaded) {
+                    std::cout << "Please load a CSV file first.\n";
+                    break;
+                }
+                std::cout << "Enter column name for statistical info: ";
+                std::cin >> column_name;
+                if (!ds->is_categorical(column_name))
+                {
+                    std::cout << "Stats for numerical column " << column_name << " :" << std::endl;
+                    double mean = ds->get_mean(column_name);
+                    double median = ds->get_median(column_name);
+                    double std_dev = ds->get_std_dev(column_name);
+                    double variance = ds->get_variance(column_name);
+
+                    std::cout << " - Mean = " << mean << std::endl;
+                    std::cout << " - Median = " << median << std::endl;
+                    std::cout << " - Standard deviation = " << std_dev << std::endl;
+                    std::cout << " - Variance = " << variance << std::endl;
+                }
+                else
+                {
+                    std::cout << "Stats for categorical column " << column_name << " :" << std::endl;
+                    std::map<std::string, int> frequency_count_map = ds->get_frequency_count(column_name);
+                    for (const auto& pair : frequency_count_map) {
+                        std::cout << " - " << pair.first << ": " << pair.second << "\n";
+                    }
+                }
+                break;
+            }
+            case 3: {
+                if (!fileLoaded) {
+                    std::cout << "Please load a CSV file first.\n";
+                    break;
+                }
+                std::cout << "Enter the path to the output file: ";
+                std::cin >> outputFilePath;
+                ds->output_statistics(outputFilePath);
+                break;
+            }
+            case 4:
+                return; // Return to the main menu
+            default:
+                std::cout << "Invalid choice. Please try again.\n";
+                break;
+        }
+    }
+}
+
+int main() {
+
+    while (true) {
+        std::cout << "Choose a module:\n";
+        std::cout << "1. Statistics\n";
+        std::cout << "2. Interpolator\n";
+        std::cout << "3. Exit\n";
+        std::cout << "Enter your choice: ";
+
+        int choice;
+        std::cin >> choice;
+
+        switch (choice) {
+            case 1:
+                handle_statistics_module();
+                break;
+            case 2:
+                handle_interpolator_module();
+                break;
+            case 3:
+                std::cout << "Exiting program...\n";
+                return 0;
+            default:
+                std::cout << "Invalid choice. Please try again.\n";
+                break;
         }
     }
 }

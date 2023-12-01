@@ -75,12 +75,15 @@ namespace scitool {
             }
         }
 
+        bool is_categorical(const std::string& column_name);
+
         double get_mean(const std::string& column_name);
         double get_std_dev(const std::string& column_name);
         double get_median(const std::string& column_name);
         double get_variance(const std::string& column_name);
         std::map<std::string, int> get_frequency_count(const std::string& column_name);
         Eigen::MatrixXd get_correlation_matrix();
+
         void output_statistics(const std::string& output_file);
 
         auto begin() {
@@ -121,7 +124,7 @@ namespace scitool {
 
     };
 
-    static std::optional<dataset::data_variant> convert(const std::string &str) {
+    std::optional<dataset::data_variant> convert(const std::string &str) {
         if (str.empty()) return std::nullopt;
 
         char* end;

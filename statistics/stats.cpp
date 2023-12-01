@@ -395,4 +395,9 @@ namespace scitool {
 
         correlation_matrix.emplace(matrix_xd);
     }
+
+    bool dataset::is_categorical(const std::string& column_name) {
+        auto& col_stats = column_statistics[column_name];
+        return std::find(categorical_columns.begin(), categorical_columns.end(), col_stats.col_index) != categorical_columns.end();
+    }
 }
