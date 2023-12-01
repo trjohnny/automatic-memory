@@ -10,6 +10,8 @@ namespace scitool {
 
         double result = 0.0;
 
+        // this algorithm is the lagrange interpolator
+        // more information can be found here: https://en.wikipedia.org/wiki/Lagrange_polynomia.
         for (int i = 0; i < (int) points.size(); ++i) {
             double term = points[i].y;
             for (int j = 0; j < (int) points.size(); ++j) {

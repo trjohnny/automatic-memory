@@ -4,6 +4,7 @@ namespace scitool {
     interpolator::interpolator(const std::vector<point> &points)
             : points(points) {
 
+        // sorting points by x-value makes calculation easier for all interpolators
         std::sort(this->points.begin(), this->points.end(), [](const point &a, const point &b) {
             return a.x < b.x;
         });
