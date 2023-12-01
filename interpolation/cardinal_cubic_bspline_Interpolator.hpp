@@ -3,13 +3,16 @@
 #include "interpolator.hpp"
 #include <boost/math/interpolators/cardinal_cubic_b_spline.hpp>
 
-class CardinalCubicBSplineInterpolator  : public Interpolator {
-private:
-    boost::math::interpolators::cardinal_cubic_b_spline<double> spline;
-public:
-    CardinalCubicBSplineInterpolator(const std::vector<Point>& points);
-    double operator()(double point) const override;
-};
+namespace scitool {
+    class cardinal_cubic_bspline_interpolator : public interpolator {
+    private:
+        boost::math::interpolators::cardinal_cubic_b_spline<double> spline;
+    public:
+        cardinal_cubic_bspline_interpolator(const std::vector<point> &points);
+
+        double operator()(double point) const override;
+    };
+}
 
 
 #endif

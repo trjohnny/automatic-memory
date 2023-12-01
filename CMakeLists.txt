@@ -24,19 +24,13 @@ add_library(interpolators SHARED
         interpolation/polynomial_interpolator.cpp
 )
 
-# Add interpolators library
-add_library(statistics SHARED
-        statistics/stats.cpp
-)
-
 # Include directories for interpolators library
 target_include_directories(interpolators PUBLIC ${BOOST_DIR})
 target_include_directories(interpolators PUBLIC ${EIGEN_DIR})
 
-target_include_directories(statistics PUBLIC ${EIGEN_DIR})
 
 target_include_directories(exec_target PUBLIC ${MU_PARSER_DIR})
 
 
 # Link the interpolators library to main executable
-target_link_libraries(exec_target PRIVATE interpolators statistics muparser)
+target_link_libraries(exec_target PRIVATE interpolators   muparser)

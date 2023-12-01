@@ -8,25 +8,7 @@
 #include "include/muParser.h"
 #include <map>
 
-/*
-int main() {
-    try {
-        std::string csvFilePath = "../housing.csv";
-        std::string outputFilePath = "../out.txt";
-
-        Statistics stats(csvFilePath, outputFilePath);
-        stats.analyze();
-
-        std::cout << "Statistical analysis completed. Results are in: " << outputFilePath << std::endl;
-    } catch (const std::exception& e) {
-        std::cerr << "An error occurred: " << e.what() << std::endl;
-        return 1;
-    }
-
-    return 0;
-}
-*/
-std::vector<Point> generatePoints(const std::function<double(double)>& function, double start, double end, double increment) {
+std::vector<scitool::point> generate_points(const std::function<double(double)>& function, double start, double end, double increment) {
     if (increment <= 0) {
         throw std::invalid_argument("Increment must be a positive non-zero value.");
     }
@@ -35,7 +17,7 @@ std::vector<Point> generatePoints(const std::function<double(double)>& function,
         throw std::invalid_argument("Start value must be less than the end value.");
     }
 
-    std::vector<Point> points;
+    std::vector<scitool::point> points;
 
     for (double x = start; x < end; x += increment) {
         double y = function(x);
@@ -45,44 +27,44 @@ std::vector<Point> generatePoints(const std::function<double(double)>& function,
 }
 
 
-double calculateInterpolatorMAE(const std::unique_ptr<Interpolator>& interpolator, const std::vector<Point>& testPoints, const std::function<double(double)>& function) {
-    double totalError = 0.0;
+double calcuate_interpolator_MAE(const std::unique_ptr<scitool::interpolator>& interpolator, const std::vector<scitool::point>& test_points, const std::function<double(double)>& function) {
+    double total_error = 0.0;
 
-    for (const auto& point : testPoints) {
-        double interpolatedValue = (*interpolator)(point.x);
-        double actualValue = function(point.x);
-        double error = std::abs(interpolatedValue - actualValue);
-        totalError += error;
+    for (const auto& point : test_points) {
+        double interpolated_value = (*interpolator)(point.x);
+        double actual_value = function(point.x);
+        double error = std::abs(interpolated_value - actual_value);
+        total_error += error;
     }
 
-    return totalError / static_cast<double>(testPoints.size());
+    return total_error / static_cast<double>(test_points.size());
 }
 
-void testAllInterpolators(const int minPoints = 10, const int maxPoints = 50, const int incrementNumPoints = 10) {
+void test_all_interpolators(const int min_points = 10, const int max_points = 50, const int increment_num_points = 10) {
 
 
     std::cout << "1) Testing exceptions" << std::endl;
     try {
-        LinearInterpolator linearInterpolator({{1.0, 2.0}, {3.0, 4.0}});
-        linearInterpolator(0.5);
+        scitool::linear_interpolator interpolator({{1.0, 2.0}, {3.0, 4.0}});
+        interpolator(0.5);
     } catch (const std::out_of_range& e) {
         std::cout << "Testing out_of_range exception, got: " << e.what() << std::endl;
     }
 
     try {
-        LinearInterpolator linearInterpolator({{1.0, 2.0}, {1.0, 4.0}});
+        scitool::linear_interpolator interpolator({{1.0, 2.0}, {1.0, 4.0}});
     } catch (const std::invalid_argument& e) {
         std::cout << "Testing with two points having the same x coordinate, got: " << e.what() << std::endl;
     }
 
     try {
-        LinearInterpolator linearInterpolator({{1.0, 2.0}});
+        scitool::linear_interpolator interpolator({{1.0, 2.0}});
     } catch (const std::invalid_argument& e) {
         std::cout << "Testing with only one point, got: " << e.what() << std::endl;
     }
 
     try {
-        CardinalCubicBSplineInterpolator bSplineInterpolator({{1.0, 2.0},{2.0, 2.0},{3.0, 2.0}});
+        scitool::cardinal_cubic_bspline_interpolator interpolator({{1.0, 2.0},{2.0, 2.0},{3.0, 2.0}});
     } catch (const std::invalid_argument& e) {
         std::cout << "Testing with only 3 points and the cardinal cubic B-Spline interpolator, got: " << e.what() << std::endl;
     }
@@ -94,18 +76,18 @@ void testAllInterpolators(const int minPoints = 10, const int maxPoints = 50, co
     functions["cos(2x)"] = [](double x) { return cos(x); };
 
     for (const auto& func : functions) {
-        for (int pointCount = minPoints; pointCount <= maxPoints; pointCount+=incrementNumPoints) {
-            std::vector<Point> points = generatePoints(func.second, 0.0, pointCount, 1);
-            std::vector<Point> testPoints = generatePoints(func.second, 0.5, pointCount-1, 3);
+        for (int point_count = min_points; point_count <= max_points; point_count+=increment_num_points) {
+            std::vector<scitool::point> points = generate_points(func.second, 0.0, point_count, 1);
+            std::vector<scitool::point> test_points = generate_points(func.second, 0.5, point_count-1, 3);
 
-            std::unordered_map<std::string, std::unique_ptr<Interpolator>> interpolators;
-            interpolators["CardinalCubicBSplineInterpolator"] = std::make_unique<CardinalCubicBSplineInterpolator>(points);
-            interpolators["PolynomialInterpolator"] = std::make_unique<PolynomialInterpolator>(points);
-            interpolators["LinearInterpolator"] = std::make_unique<LinearInterpolator>(points);
+            std::unordered_map<std::string, std::unique_ptr<scitool::interpolator>> interpolators;
+            interpolators["CardinalCubicBSplineInterpolator"] = std::make_unique<scitool::cardinal_cubic_bspline_interpolator>(points);
+            interpolators["PolynomialInterpolator"] = std::make_unique<scitool::polynomial_interpolator>(points);
+            interpolators["LinearInterpolator"] = std::make_unique<scitool::linear_interpolator>(points);
 
-            std::cout << "Testing with " << func.first << " function and " << pointCount << " points." << std::endl;
+            std::cout << "Testing with " << func.first << " function and " << point_count << " points." << std::endl;
             for (const auto& interpolator : interpolators) {
-                std::cout << "Interpolator: " << interpolator.first  << ", MAE: " << calculateInterpolatorMAE(interpolator.second, testPoints, func.second) << std::endl;
+                std::cout << "Interpolator: " << interpolator.first  << ", MAE: " << calcuate_interpolator_MAE(interpolator.second, test_points, func.second) << std::endl;
             }
 
             std::cout << "\n";
@@ -113,8 +95,8 @@ void testAllInterpolators(const int minPoints = 10, const int maxPoints = 50, co
     }
 }
 
-std::vector<Point> getUserDefinedPoints() {
-    std::vector<Point> userPoints;
+std::vector<scitool::point> get_user_defined_points() {
+    std::vector<scitool::point> user_points;
     std::cout << "Enter points in the format 'x y'. Enter 'q' to finish input.\n";
     while (true) {
         double x, y;
@@ -124,22 +106,22 @@ std::vector<Point> getUserDefinedPoints() {
         try {
             x = std::stod(input);
             std::cin >> y;
-            userPoints.emplace_back(x, y);
+            user_points.emplace_back(x, y);
         } catch (const std::invalid_argument& e) {
             std::cout << "Invalid input. Enter 'x y' or 'q' to finish.\n";
         }
     }
-    return userPoints;
+    return user_points;
 }
 
 int main() {
-    std::map<std::string, std::unique_ptr<Interpolator>> interpolators;
+    std::map<std::string, std::unique_ptr<scitool::interpolator>> interpolators;
 
-    mu::Parser interpolationFunction;
-    bool functionDefined = false;
-    double pointToInterpolate = 0;
+    mu::Parser interpolation_function;
+    bool function_defined = false;
+    double point_to_interpolate = 0;
 
-    std::vector<Point> interpolationPoints;
+    std::vector<scitool::point> interpolation_points;
 
     while (true) {
         std::cout << "Options:\n";
@@ -160,36 +142,37 @@ int main() {
                 std::cin.ignore();
                 std::getline(std::cin, expression);
                 try {
-                    interpolationFunction.SetExpr(expression);
-                    interpolationFunction.DefineVar("x", &pointToInterpolate);
-                    interpolationFunction.Eval(); // Check if the expression can be evaluated
-                    functionDefined = true;
+                    interpolation_function.SetExpr(expression);
+                    interpolation_function.DefineVar("x", &point_to_interpolate);
+                    interpolation_function.Eval(); // Check if the expression can be evaluated
+                    function_defined = true;
                 } catch (const mu::Parser::exception_type& e) {
                     std::cout << "Parsing error in the function: " << e.GetMsg() << std::endl;
+                    function_defined = false;
                 }
                 break;
             }
             case 2: {
                 try {
-                    interpolationPoints = getUserDefinedPoints();
-                    interpolators["CardinalCubicBSplineInterpolator"] = std::make_unique<CardinalCubicBSplineInterpolator>(interpolationPoints);
-                    interpolators["PolynomialInterpolator"] = std::make_unique<PolynomialInterpolator>(interpolationPoints);
-                    interpolators["LinearInterpolator"] = std::make_unique<LinearInterpolator>(interpolationPoints);
+                    interpolation_points = get_user_defined_points();
+                    interpolators["CardinalCubicBSplineInterpolator"] = std::make_unique<scitool::cardinal_cubic_bspline_interpolator>(interpolation_points);
+                    interpolators["PolynomialInterpolator"] = std::make_unique<scitool::polynomial_interpolator>(interpolation_points);
+                    interpolators["LinearInterpolator"] = std::make_unique<scitool::linear_interpolator>(interpolation_points);
                 } catch (const std::invalid_argument& e) {
                     std::cerr << "An error occurred while initializing interpolators: " << e.what() << std::endl;
                 }
                 break;
             }
             case 3: {
-                if (functionDefined && !interpolationPoints.empty()) {
+                if (function_defined && !interpolation_points.empty()) {
                     try {
                         std::cout << "Enter the point to interpolate: ";
-                        std::cin >> pointToInterpolate;
+                        std::cin >> point_to_interpolate;
 
-                        std::cout << "Interpolating at point x=" << pointToInterpolate << std::endl;
+                        std::cout << "Interpolating at point x=" << point_to_interpolate << std::endl;
                         for (const auto& interpolator : interpolators) {
-                            double interpolatedValue = (*interpolator.second)(pointToInterpolate);
-                            std::cout << "Interpolator: " << interpolator.first << ", Interpolated Value (estimated y): " << interpolatedValue << ", Actual value (y): " << interpolationFunction.Eval() <<  std::endl;
+                            double interpolated_value = (*interpolator.second)(point_to_interpolate);
+                            std::cout << "Interpolator: " << interpolator.first << ", Interpolated Value (estimated y): " << interpolated_value << ", Actual value (y): " << interpolation_function.Eval() <<  std::endl;
                         }
                     } catch (const std::out_of_range& e) {
                         std::cerr << "An error occurred while interpolating: " << e.what() << std::endl;
@@ -200,7 +183,7 @@ int main() {
                 break;
             }
             case 4: {
-                testAllInterpolators();
+                test_all_interpolators();
                 break;
             }
             case 5: {

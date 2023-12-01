@@ -1,24 +1,28 @@
 #ifndef INTERPOLATOR_HPP
 #define INTERPOLATOR_HPP
 
-#include <algorithm>
 #include <vector>
+#include <iostream>
+#include <algorithm>
 
+namespace scitool {
 
-struct Point {
-    double x, y;
-    Point(double x_val, double y_val) : x(x_val), y(y_val) {}
-};
+    struct point {
+        double x, y;
 
-class Interpolator {
-protected:
-    std::vector<Point> points;
+        point(double x_val, double y_val) : x(x_val), y(y_val) {}
+    };
 
-public:
-    Interpolator(const std::vector<Point>&);
-    virtual ~Interpolator() = default;
+    class interpolator {
+    protected:
+        std::vector<point> points;
 
-    virtual double operator()(double x_val) const = 0;
-};
+    public:
+        interpolator(const std::vector<point> &);
+        virtual ~interpolator() = default;
+        virtual double operator()(double x_val) const = 0;
+    };
+
+}
 
 #endif
