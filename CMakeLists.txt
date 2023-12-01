@@ -23,9 +23,6 @@ add_library(interpolators SHARED
 add_library(statistics SHARED
         statistics/stat_utils.cpp
         statistics/dataset.cpp
-        statistics/dataset.hpp
-        statistics/dataset.cpp
-        statistics/dataset.hpp
 )
 
 # Include directories for interpolators library

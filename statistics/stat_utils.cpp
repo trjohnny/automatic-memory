@@ -1,4 +1,7 @@
 #include "stat_utils.hpp"
+#include <stdexcept>
+#include <algorithm>
+#include <cmath>
 #include <numeric>
 
 namespace scitool {

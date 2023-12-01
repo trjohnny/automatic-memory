@@ -5,7 +5,6 @@
 #include "stat_utils.cpp"
 #include "dataset.hpp"
 #include <fstream>
-#include <memory>
 #include <iomanip>
 
 namespace scitool {
@@ -16,10 +15,10 @@ namespace scitool {
             throw std::invalid_argument("Unable to open file: " + input_file);
         }
 
-        std::vector<std::string> columns;
-        dataset::matrix data_matrix;
-        std::set<size_t> numerical_columns;
-        std::set<size_t> categorical_columns;
+        std::vector<std::string> columns_;
+        dataset::matrix data_matrix_;
+        std::set<size_t> numerical_columns_;
+        std::set<size_t> categorical_columns_;
 
         // Read header
         std::string line;
@@ -27,7 +26,7 @@ namespace scitool {
             std::istringstream header_stream(line);
             std::string column;
             while (std::getline(header_stream, column, ',')) {
-                columns.push_back(column);
+                columns_.push_back(column);
             }
         }
 
@@ -48,20 +47,20 @@ namespace scitool {
                 if (is_first_row) {
                     if (std::holds_alternative<int>(data_variant.value()) ||
                         std::holds_alternative<double>(data_variant.value())) {
-                        numerical_columns.insert(column_index);
+                        numerical_columns_.insert(column_index);
                     } else {
-                        categorical_columns.insert(column_index);
+                        categorical_columns_.insert(column_index);
                     }
                 }
 
                 column_index++;
             }
-            data_matrix.push_back(std::move(data_row));
+            data_matrix_.push_back(std::move(data_row));
             is_first_row = false;
         }
 
-        return std::make_unique<dataset>(std::move(columns), std::move(data_matrix),
-                                         std::move(numerical_columns), std::move(categorical_columns));
+        return std::make_unique<dataset>(std::move(columns_), std::move(data_matrix_),
+                                         std::move(numerical_columns_), std::move(categorical_columns_));
     }
 
     void dataset::calculate_statistics() {
@@ -294,7 +293,6 @@ namespace scitool {
             column_data[idx++] = extract_numerical_column_data(col_index);
         }
 
-        #pragma omp parallel for collapse(2) // OpenMP directive for parallel for loop
         for (size_t i = 0; i < num_numerical_columns; ++i) {
             for (size_t j = 0; j <= i; ++j) { // Compute only half the matrix_xd
                 matrix_xd(i, j) = matrix_xd(j, i) = scitool::correlation(column_data[i], column_data[j]);

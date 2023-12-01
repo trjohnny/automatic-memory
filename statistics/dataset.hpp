@@ -5,11 +5,12 @@
 #include <set>
 #include <map>
 #include <optional>
+#include <memory>
 #include <variant>
 #include "Eigen/Core"
 
-#ifndef SCIENTIFIC_COMPUTING_TOOLBOX_DATASET_HPP
-#define SCIENTIFIC_COMPUTING_TOOLBOX_DATASET_HPP
+#ifndef DATASET_HPP
+#define DATASET_HPP
 
 namespace scitool {
 
@@ -49,12 +50,11 @@ namespace scitool {
             typename matrix::iterator current;
         };
 
-        dataset(std::vector<std::string> cols, matrix matrix, std::set<size_t> numCols, std::set<size_t> catCols)
-                : data_matrix(std::move(matrix)), columns(std::move(cols)), numerical_columns(std::move(numCols)), categorical_columns(std::move(catCols)) {
-            for (size_t colIdx = 0; colIdx < columns.size(); ++colIdx) {
-                column_statistics[columns[colIdx]] = column_stat{
-                        .col_index = colIdx
-                };
+        dataset(std::vector<std::string> cols, matrix matrix, std::set<size_t> num_cols, std::set<size_t> cat_cols)
+                : data_matrix(std::move(matrix)), columns(std::move(cols)), numerical_columns(std::move(num_cols)), categorical_columns(std::move(cat_cols)) {
+            for (size_t col_idx = 0; col_idx < columns.size(); ++col_idx) {
+                column_statistics[columns[col_idx]] = column_stat{};
+                column_statistics[columns[col_idx]].col_index = col_idx;
             }
         }
 
@@ -112,4 +112,4 @@ namespace scitool {
 
 } // scitool
 
-#endif //SCIENTIFIC_COMPUTING_TOOLBOX_DATASET_HPP
+#endif //DATASET_HPP

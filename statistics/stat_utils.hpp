@@ -5,6 +5,7 @@
 #include <set>
 #include <map>
 #include <optional>
+#include <vector>
 
 #ifndef STATS_HPP
 #define STATS_HPP
