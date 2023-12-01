@@ -7,7 +7,7 @@ if(APPLE OR UNIX)
     add_compile_options(-Wextra)
 endif ()
 
-add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+add_compile_options(-Wall -Wpedantic -Werror)
 
 set(EIGEN_DIR "include/eigen-3.4.0")
 set(BOOST_DIR "include/boost-1.83.0")
