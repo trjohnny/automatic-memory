@@ -117,19 +117,16 @@ std::vector<scitool::point> get_user_defined_points() {
 int main() {
     std::map<std::string, std::unique_ptr<scitool::interpolator>> interpolators;
 
-    mu::Parser interpolation_function;
-    bool function_defined = false;
     double point_to_interpolate = 0;
 
     std::vector<scitool::point> interpolation_points;
 
     while (true) {
         std::cout << "Options:\n";
-        std::cout << "1. Initialize Interpolation Function\n";
-        std::cout << "2. Initialize Interpolator dataset\n";
-        std::cout << "3. Calculate Interpolation on a Specified Point\n";
-        std::cout << "4. Run Base Tests for Interpolators\n";
-        std::cout << "5. Exit\n";
+        std::cout << "1. Initialize Interpolator dataset\n";
+        std::cout << "2. Calculate Interpolation on a Specified Point\n";
+        std::cout << "3. Run Base Tests for Interpolators\n";
+        std::cout << "4. Exit\n";
         std::cout << "Choose an option: ";
 
         int choice;
@@ -137,34 +134,31 @@ int main() {
 
         switch (choice) {
             case 1: {
-                std::string expression;
-                std::cout << "Enter the interpolation function, use x as parameter (e.g., sin(x), x^2, cos(2*x)): ";
-                std::cin.ignore();
-                std::getline(std::cin, expression);
+                interpolation_points = get_user_defined_points();
+
                 try {
-                    interpolation_function.SetExpr(expression);
-                    interpolation_function.DefineVar("x", &point_to_interpolate);
-                    interpolation_function.Eval(); // Check if the expression can be evaluated
-                    function_defined = true;
-                } catch (const mu::Parser::exception_type& e) {
-                    std::cout << "Parsing error in the function: " << e.GetMsg() << std::endl;
-                    function_defined = false;
+                    interpolators["LinearInterpolator"] = std::make_unique<scitool::linear_interpolator>(interpolation_points);
+                    interpolators["PolynomialInterpolator"] = std::make_unique<scitool::polynomial_interpolator>(interpolation_points);
+                } catch (const std::invalid_argument& e) {
+                    std::cerr << "Will not consider linear and polynomial interpolator: " << e.what() << std::endl;
+                    if(interpolators.find("LinearInterpolator") != interpolators.end())
+                        interpolators.erase("LinearInterpolator");
+                    if(interpolators.find("PolynomialInterpolator") != interpolators.end())
+                        interpolators.erase("PolynomialInterpolator");
                 }
+
+                try {
+                    interpolators["CardinalCubicBSplineInterpolator"] = std::make_unique<scitool::cardinal_cubic_bspline_interpolator>(interpolation_points);
+                } catch (const std::invalid_argument& e) {
+                    std::cerr << "Will not consider cardinal cubic b-spline interpolator: " << e.what() << std::endl;
+                    if(interpolators.find("CardinalCubicBSplineInterpolator") != interpolators.end())
+                        interpolators.erase("CardinalCubicBSplineInterpolator");
+                }
+
                 break;
             }
             case 2: {
-                try {
-                    interpolation_points = get_user_defined_points();
-                    interpolators["CardinalCubicBSplineInterpolator"] = std::make_unique<scitool::cardinal_cubic_bspline_interpolator>(interpolation_points);
-                    interpolators["PolynomialInterpolator"] = std::make_unique<scitool::polynomial_interpolator>(interpolation_points);
-                    interpolators["LinearInterpolator"] = std::make_unique<scitool::linear_interpolator>(interpolation_points);
-                } catch (const std::invalid_argument& e) {
-                    std::cerr << "An error occurred while initializing interpolators: " << e.what() << std::endl;
-                }
-                break;
-            }
-            case 3: {
-                if (function_defined && !interpolation_points.empty()) {
+                if (!interpolation_points.empty()) {
                     try {
                         std::cout << "Enter the point to interpolate: ";
                         std::cin >> point_to_interpolate;
@@ -172,7 +166,7 @@ int main() {
                         std::cout << "Interpolating at point x=" << point_to_interpolate << std::endl;
                         for (const auto& interpolator : interpolators) {
                             double interpolated_value = (*interpolator.second)(point_to_interpolate);
-                            std::cout << "Interpolator: " << interpolator.first << ", Interpolated Value (estimated y): " << interpolated_value << ", Actual value (y): " << interpolation_function.Eval() <<  std::endl;
+                            std::cout << "Interpolator: " << interpolator.first << ", Interpolated Value (estimated y): " << interpolated_value <<  std::endl;
                         }
                     } catch (const std::out_of_range& e) {
                         std::cerr << "An error occurred while interpolating: " << e.what() << std::endl;
@@ -182,11 +176,11 @@ int main() {
                 }
                 break;
             }
-            case 4: {
+            case 3: {
                 test_all_interpolators();
                 break;
             }
-            case 5: {
+            case 4: {
                 std::cout << "Exiting...\n";
                 return 0;
             }
