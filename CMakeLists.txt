@@ -3,12 +3,11 @@ project(scientific-computing-toolbox)
 
 set(CMAKE_CXX_STANDARD 17)
 
-if(APPLE OR UNIX)
-    add_compile_options(-Wextra)
+if(CMAKE_COMPILER_IS_GNUCXX)
+    add_compile_options(-Wall -Wpedantic -Werror)
 endif ()
 
-add_compile_options(-Wall -Wextra -Wpedantic -Werror)
-
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 set(EIGEN_DIR "include/eigen-3.4.0")
 set(BOOST_DIR "include/boost-1.83.0")
 include_directories(${EIGEN_DIR} ${BOOST_DIR})
