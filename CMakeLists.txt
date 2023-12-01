@@ -3,11 +3,7 @@ project(scientific-computing-toolbox)
 
 set(CMAKE_CXX_STANDARD 17)
 
-if(APPLE OR UNIX)
-    add_compile_options(-Wextra)
-endif ()
-
-add_compile_options(-Wall -Wpedantic -Werror)
+add_compile_options(-Wextra -Wpedantic -Wall -Werror)
 
 set(EIGEN_DIR "include/eigen-3.4.0")
 set(BOOST_DIR "include/boost-1.83.0")
