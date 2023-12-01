@@ -3,6 +3,10 @@ project(scientific-computing-toolbox)
 
 set(CMAKE_CXX_STANDARD 17)
 
+if(APPLE OR UNIX)
+    add_compile_options(-Wextra)
+endif ()
+
 add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 
 set(EIGEN_DIR "include/eigen-3.4.0")
