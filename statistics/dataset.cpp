@@ -141,7 +141,7 @@ namespace scitool {
         }
 
         out_file << std::setfill('-') << std::setw(max_row_label_width) << "+";
-        for (int i = 0; i < numerical_columns.size(); ++i) {
+        for (size_t i = 0; i < numerical_columns.size(); ++i) {
             out_file << std::setw(column_widths[i]) << std::setfill('-') << "+";
         }
         out_file << std::setfill(' ') << "\n";
@@ -295,8 +295,8 @@ namespace scitool {
             column_data[idx++] = extract_numerical_column_data(col_index);
         }
 
-        for (int i = 0; i < num_numerical_columns; ++i) {
-            for (int j = 0; j <= i; ++j) { // Compute only half the matrix_xd
+        for (size_t i = 0; i < num_numerical_columns; ++i) {
+            for (size_t j = 0; j <= i; ++j) { // Compute only half the matrix_xd
                 matrix_xd(i, j) = matrix_xd(j, i) = scitool::correlation(column_data[i], column_data[j]);
             }
         }

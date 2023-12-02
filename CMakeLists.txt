@@ -3,9 +3,7 @@ project(scientific-computing-toolbox)
 
 set(CMAKE_CXX_STANDARD 17)
 
-if(CMAKE_COMPILER_IS_GNUCXX)
-    add_compile_options(-Wall -Wpedantic -Werror)
-endif ()
+add_compile_options(-Wall -Wpedantic -Werror -Wextra)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 set(EIGEN_DIR "include/eigen-3.4.0")

@@ -52,7 +52,7 @@ namespace scitool {
 
         dataset(std::vector<std::string> cols, matrix matrix, std::set<int> num_cols, std::set<int> cat_cols)
                 : data_matrix(std::move(matrix)), columns(std::move(cols)), numerical_columns(std::move(num_cols)), categorical_columns(std::move(cat_cols)) {
-            for (int col_idx = 0; col_idx < columns.size(); ++col_idx) {
+            for (size_t col_idx = 0; col_idx < columns.size(); ++col_idx) {
                 column_statistics[columns[col_idx]] = column_stat{};
                 column_statistics[columns[col_idx]].col_index = col_idx;
             }
