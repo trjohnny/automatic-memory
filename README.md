@@ -1,130 +1,147 @@
-# Statistics Library
+# Scientific Computing Toolbox
 ## Overview
-Statistics Library is a C++ library designed for scientific computing and data analysis. It offers functionalities for statistical analysis, including computations of mean, median, standard deviation, variance, and more.
+The Scientific Computing Toolbox is a comprehensive C++ library designed for advanced scientific computing and data 
+analysis. It includes two key modules as shared libraries: the Statistics Library and the Interpolator Module, each 
+offering specialized functionalities for a broad range of applications.
 
 ## Prerequisites
-Before installing the Statistics Library, ensure you have the following installed on your system:
+Before installing the Scientific Computing Toolbox, ensure you have the following installed on your system:
 
-CMake (version 3.14 or higher)
-A C++ compiler supporting C++17 (e.g., GCC, Clang)
-Eigen (version 3.3 or higher)
-GNU Scientific Library (GSL)
-Git (for fetching dependencies)
+* CMake (version 3.14 or higher)
+* A C++ compiler supporting C++17 (e.g., GCC, Clang)
+* Eigen (version 3.3 or higher for the Statistics Library)
+* Boost (version 1.83 or higher for the Interpolator Module)
 
-## Installation
-### Dependencies
-The library depends on Eigen, GSL, and csv-parser. Eigen and GSL need to be installed on your system. csv-parser is included as a part of the build process via CMake's FetchContent.
+## Building the Toolbox
 
-Installing Eigen and GSL
-* On Ubuntu/Debian:
+1. Create a build directory inside the root folder and navigate into it:
+   ```
+    mkdir build 
+    cd build
+   ```
 
-  `sudo apt-get install libeigen3-dev libgsl-dev`
-* On macOS (using Homebrew):
+2. Run CMake and build the project:
 
-  `brew install eigen gsl`
-
-### Building the Library
-
-1. Clone the repository:
-
-    `git clone https://github.com/yourusername/StatisticsLibrary.git
-    cd StatisticsLibrary`
-
-2. Create a build directory and navigate into it:
-
-    `mkdir build
-    cd build`
-
-3. Run CMake and build the project:
-
-    `cmake ..
-    make`
+   ```
+   cmake ..
+   make
+    ```
 
 ## Usage
-Include the Statistics Library in your C++ project and link against it. Here's a basic example of using the library:
 
-```
-#include "statistics.hpp"
+The toolbox is accessed through a main program, which allows users to interact with either the Statistics or 
+Interpolator module. Include the necessary headers in your project, and compile with the corresponding shared libraries.
 
-int main() {
-// Example usage of the Statistics Library
-// ...
-return 0;
-}
-```
+Example of interacting with the modules:
 
-## Features
-* Statistical analysis tools including mean, median, standard deviation, and variance calculations.
-* CSV data parsing and processing capabilities.
-* Integration with Eigen for matrix and vector operations.
-* GSL-based advanced mathematical computations.
+* Interpolator module
+  * Generate points for interpolation.
+  * Calculate Mean Absolute Error (MAE) for various interpolators.
+* Statistics module
+  * Perform statistical analysis on CSV data.
+  * Get statistical information of a specified column.
+  * Output statistics to a file.
 
-## California Housing Prices dataset analysis
+To start, run the compiled executable and follow the prompts to interact with each module.
 
-To test the statistics library, we decided to perform a statistical analysis of the famous California Housing Prices 
-dataset as follows.
+## California Housing Prices Dataset Analysis
+In our examination of the California Housing Prices dataset, we conducted a comprehensive statistical analysis using 
+the Statistics module. Here are our findings:
 
 ### Numerical Data Statistics
+
 #### Location (Longitude and Latitude):
 
-The mean and median values for longitude and latitude suggest the geographic center of the dataset. The standard 
-deviation indicates the spread, which is relatively moderate, suggesting that the dataset covers a specific geographic 
-region without extreme variation.
+* **Longitude**:
+  * Mean: -119.57
+  * Median: -118.49
+  * Standard Deviation: 2.00348
+  * Variance: 4.01394
+* **Latitude**:
+  * Mean: 35.6319
+  * Median: 34.26
+  * Standard Deviation: 2.1359
+  * Variance: 4.56207
 
-#### Housing Median Age:
+The geographical center of the dataset is reflected in the mean and median values of longitude and latitude. The 
+moderate standard deviation suggests a concentration of data within a specific geographical region without significant extremes.
 
-The mean and median are close, indicating a relatively symmetric age distribution of houses. The standard deviation and 
-variance are relatively high, implying a diverse range of house ages.
+* **Housing Median Age**:
+  * Mean: 28.6395
+  * Median: 29
+  * Standard Deviation: 12.5853
+  * Variance: 158.389
 
-#### Total Rooms, Bedrooms, Population, and Households:
+The close values of mean and median indicate a symmetrical age distribution of houses. The relatively high standard deviation and variance suggest a wide range of house ages, indicative of diverse housing developments.
 
-These attributes have high means and standard deviations, indicating a wide variance in the sizes of houses and 
-populations across the dataset. The significantly higher standard deviation for total rooms shows a greater diversity in house sizes.
+#### Housing Attributes (Total Rooms, Bedrooms, Population, Households):
 
-#### Median Income and House Value:
+* **Total Rooms**:
+  * Mean: 2635.76
+  * Median: 2127
+  * Standard Deviation: 2181.56
+* **Total Bedrooms**:
+  * Mean: 537.871
+  * Median: 431
+  * Standard Deviation: 421.375
+* **Population**:
+  * Mean: 1425.48
+  * Median: 1166
+  * Standard Deviation: 1132.43
+* **Households**:
+  * Mean: 499.54
+  * Median: 409
+  * Standard Deviation: 382.32
 
-These economic indicators show a wide range of values, as evidenced by their high standard deviations and variances. 
-The difference between the mean and median in house values suggests a right-skewed distribution, possibly due to some 
-very high-value houses.
+There is significant variability in the sizes of houses and populations across the dataset, as indicated by the high 
+means and standard deviations. The large standard deviation for total rooms highlights the diversity in house sizes.
 
-### Categorical Data Frequency Counts
+#### Economic Indicators (Median Income and House Value):
 
-#### Ocean Proximity:
-This category varies significantly, with 'INLAND' and '<1H OCEAN' being the most frequent categories. The presence of 
-only 5 'ISLAND' instances indicates that it's a rare category in this dataset.
+* **Median Income**:
+  * Mean: 3.87067
+  * Median: 3.5348
+  * Standard Deviation: 1.89978
+* **Median House Value**:
+  * Mean: 206856
+  * Median: 179700
+  * Standard Deviation: 115393
 
-### Correlation Matrix
-The correlation matrix shows the relationships between different numerical variables. High correlation values (close 
-to 1) indicate a strong linear relationship.
+Both median income and house value exhibit a wide range in their values, denoted by high standard deviations. The disparity between mean and median house values suggests a right-skewed distribution, likely influenced by high-value properties.
 
-#### Housing Median Age and Location Coordinates (Longitude: 0.961, Latitude: 0.946):
+#### Categorical Data Frequency Counts
+* **Ocean Proximity**:
+  * <1H OCEAN: 9136
+  * INLAND: 6551
+  * ISLAND: 5
+  * NEAR BAY: 2290
+  * NEAR OCEAN: 2658
 
-The very strong positive correlations between housing median age and both longitude and latitude are intriguing. 
-This suggests a distinct geographical trend where certain areas, defined by their coordinates, predominantly consist of 
-older houses. This pattern might reflect historical development trends in the region, where older neighborhoods are 
-concentrated in specific parts of the geographical landscape.
+'INLAND' and '<1H OCEAN' categories are most prevalent. The rare occurrence of 'ISLAND' instances (only 5) highlights its uniqueness within this dataset.
 
-#### Total Rooms and Population (0.992), and Total Rooms and Households (0.998):
+### Correlation Matrix Analysis
 
-The near-perfect correlation between total rooms and both population and households is notable. While it is somewhat 
-expected that larger homes (with more rooms) would house more people, the strength of this correlation is striking. 
-It indicates a very consistent pattern across the dataset where the number of rooms in a house almost directly predicts 
-he size of the household and the associated population. This consistency might suggest standardized housing development 
-practices or a uniformity in family sizes relative to house sizes in this region.
+The correlation matrix reveals significant relationships between various numerical variables:
 
-#### Median Income and Median House Value (0.962):
+#### Housing Median Age and Location Coordinates:
+* Longitude: -0.108
+* Latitude: 0.0112
 
-The strong positive correlation between median income and median house value, while somewhat expected, is particularly 
-interesting in its strength. This correlation is a clear indicator of the economic principle that areas with higher 
-incomes can sustain higher housing prices. However, the strength of this correlation (nearly 1) might also suggest 
-limited economic diversity within neighborhoods or a strong stratification where higher-income individuals are 
-concentrated in more expensive areas, possibly leading to economic segregation.
+There's a negligible correlation between housing median age and both longitude and latitude, suggesting that location 
+coordinates do not significantly influence the age of housing in this dataset.
+
+#### Total Rooms and Population:
+* Correlation: 0.857
+
+A strong correlation between total rooms and population indicates that larger homes (with more rooms) tend to have higher populations, reflecting a consistent pattern in household size relative to house size.
+
+#### Median Income and Median House Value:
+* Correlation: 0.688
+
+A significant positive correlation between median income and house value underscores the economic principle that higher-income areas often have higher-priced houses. This strong correlation may also indicate economic homogeneity within neighborhoods.
 
 
-
-
-
-## Interpolator Module
+## Interpolator Module Testing
 
 The module was tested considering different scenarios, functions and number of points. Specifically, the following exceptions were considered:
 - Validated scenarios: Interpolation point out of range
@@ -176,11 +193,11 @@ This is why testing the polynomial interpolator with 50 points (ending in 50) in
 
 
 ### Team Collaboration 
-- Giovanni Coronica:
+- Giovanni Coronica [giovanni.coronica@studenti.units.it]:
     - Developed of the Statistics Module.
     - Contributed to the design, test and development of the Interpolator module
 
-- Thomas Rossi Mel:
+- Thomas Rossi Mel [thomas.rossimel@studenti.units.it]:
     - Developed the Interpolator Module.
     - Contributed to the design, test and development of the Statistics module
 

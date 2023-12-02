@@ -12,7 +12,7 @@ set(EIGEN_DIR "include/eigen-3.4.0")
 set(BOOST_DIR "include/boost-1.83.0")
 include_directories(${EIGEN_DIR} ${BOOST_DIR})
 
-add_executable(exec_target main.cpp)
+add_executable(scientific-computing-toolbox main.cpp)
 
 # Add interpolators library
 add_library(interpolators SHARED
@@ -34,4 +34,4 @@ target_include_directories(statistics PUBLIC ${EIGEN_DIR})
 
 
 # Link the interpolators library to main executable
-target_link_libraries(exec_target PRIVATE interpolators statistics)
+target_link_libraries(scientific-computing-toolbox PRIVATE interpolators statistics)

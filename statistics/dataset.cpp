@@ -17,8 +17,8 @@ namespace scitool {
 
         std::vector<std::string> columns_;
         dataset::matrix data_matrix_;
-        std::set<size_t> numerical_columns_;
-        std::set<size_t> categorical_columns_;
+        std::set<int> numerical_columns_;
+        std::set<int> categorical_columns_;
 
         // Read header
         std::string line;
@@ -36,7 +36,7 @@ namespace scitool {
             std::istringstream line_stream(line);
             std::string cell;
             dataset::data_row data_row;
-            size_t column_index = 0;
+            int column_index = 0;
 
             while (std::getline(line_stream, cell, ',')) {
                 // Convert string to data_variant
@@ -93,7 +93,7 @@ namespace scitool {
 
         // Output for Numerical Data
         out_file << "Numerical Data Statistics:\n";
-        for (size_t col_index : numerical_columns) {
+        for (int col_index : numerical_columns) {
             auto& col_name = columns[col_index];
             out_file << col_name << ":\n";
             out_file << "  Mean: " << column_statistics[col_name].mean.value() << "\n";
@@ -104,7 +104,7 @@ namespace scitool {
 
         // Output for Categorical Data
         out_file << "\nCategorical Data Frequency Counts:\n";
-        for (size_t col_index : categorical_columns) {
+        for (int col_index : categorical_columns) {
             auto& col_name = columns[col_index];
             out_file << col_name << ":\n";
             for (const auto& pair : column_statistics[col_name].frequency_count.value()) {
@@ -119,14 +119,14 @@ namespace scitool {
 
         // Output column headers
         out_file << std::setw(max_row_label_width) << std::setfill(' ') << " |";
-        for (size_t col_index : numerical_columns) {
+        for (int col_index : numerical_columns) {
             out_file << std::setw(column_widths[col_index] - 1) << columns[col_index] << "|";
         }
         out_file << "\n";
 
         // Output horizontal separator with '+' at intersections
         out_file << std::setfill('-') << std::setw(max_row_label_width) << "+";
-        for (size_t col_index : numerical_columns) {
+        for (int col_index : numerical_columns) {
             out_file << std::setw(column_widths[col_index]) << std::setfill('-') << "+";
         }
         out_file << std::setfill(' ') << "\n";
@@ -141,7 +141,7 @@ namespace scitool {
         }
 
         out_file << std::setfill('-') << std::setw(max_row_label_width) << "+";
-        for (size_t i = 0; i < numerical_columns.size(); ++i) {
+        for (int i = 0; i < numerical_columns.size(); ++i) {
             out_file << std::setw(column_widths[i]) << std::setfill('-') << "+";
         }
         out_file << std::setfill(' ') << "\n";
@@ -150,42 +150,41 @@ namespace scitool {
     }
 
     void dataset::calculate_mean(const std::string& column_name) {
-        size_t col_index = column_statistics[column_name].col_index;
-        printf("Calculating mean column %s at index %zu\n", column_name.c_str(), col_index);
+        int col_index = column_statistics[column_name].col_index;
         std::vector<std::optional<double>> column_data = extract_numerical_column_data(col_index);
         double mean_value = scitool::mean(column_data);
         column_statistics[column_name].mean = mean_value;
     }
 
     void dataset::calculate_std_dev(const std::string& column_name) {
-        size_t col_index = column_statistics[column_name].col_index;
+        int col_index = column_statistics[column_name].col_index;
         std::vector<std::optional<double>> column_data = extract_numerical_column_data(col_index);
         double std_dev_value = scitool::std_dev(column_data);
         column_statistics[column_name].std_dev = std_dev_value;
     }
 
     void dataset::calculate_median(const std::string& column_name) {
-        size_t col_index = column_statistics[column_name].col_index;
+        int col_index = column_statistics[column_name].col_index;
         std::vector<std::optional<double>> column_data = extract_numerical_column_data(col_index);
         double median_value = scitool::median(column_data);
         column_statistics[column_name].median = median_value;
     }
 
     void dataset::calculate_variance(const std::string& column_name) {
-        size_t col_index = column_statistics[column_name].col_index;
+        int col_index = column_statistics[column_name].col_index;
         std::vector<std::optional<double>> column_data = extract_numerical_column_data(col_index);
         double variance_value = scitool::variance(column_data);
         column_statistics[column_name].variance = variance_value;
     }
 
     void dataset::calculate_frequency_count(const std::string& column_name) {
-        size_t col_index = column_statistics[column_name].col_index;
+        int col_index = column_statistics[column_name].col_index;
         std::map<std::string, int> frequency_map = extract_categorical_column_data(col_index);
         column_statistics[column_name].frequency_count = frequency_map;
     }
 
     // Helper function to extract numerical data from a column
-    std::vector<std::optional<double>> dataset::extract_numerical_column_data(size_t col_index) {
+    std::vector<std::optional<double>> dataset::extract_numerical_column_data(int col_index) {
         std::vector<std::optional<double>> column_data;
         column_data.reserve(data_matrix.size()); // Reserve space to avoid repeated reallocations
 
@@ -214,7 +213,7 @@ namespace scitool {
     }
 
     // Helper function to extract categorical data from a column
-    std::map<std::string, int> dataset::extract_categorical_column_data(size_t colIndex) {
+    std::map<std::string, int> dataset::extract_categorical_column_data(int colIndex) {
         std::map<std::string, int> frequency_map;
         for (const auto& row : data_matrix) {
             auto& cell = row[colIndex];
@@ -266,15 +265,18 @@ namespace scitool {
     }
 
     std::map<std::string, int> dataset::get_frequency_count(const std::string& column_name) {
-        // Check if the column is categorical
+        // Check if the column exists and is categorical
         auto col_it = std::find(columns.begin(), columns.end(), column_name);
-        if (col_it == columns.end() ||
-            categorical_columns.find(std::distance(columns.begin(), col_it)) == categorical_columns.end()) {
-            throw std::runtime_error("Column '" + column_name + "' is not a categorical column");
+        if (col_it == columns.end()) {
+            throw std::invalid_argument("Column '" + column_name + "' does not exist");
+        }
+
+        if (!is_categorical(column_name)) {
+            throw std::invalid_argument("Column '" + column_name + "' is not a categorical column");
         }
 
         auto& col_stats = column_statistics[column_name];
-        if (!col_stats.median) {
+        if (!col_stats.frequency_count) {
             calculate_frequency_count(column_name);
         }
 
@@ -288,13 +290,13 @@ namespace scitool {
         std::vector<std::vector<std::optional<double>>> column_data(num_numerical_columns);
 
         // Extract data for each numerical column
-        size_t idx = 0;
+        int idx = 0;
         for (auto col_index : numerical_columns) {
             column_data[idx++] = extract_numerical_column_data(col_index);
         }
 
-        for (size_t i = 0; i < num_numerical_columns; ++i) {
-            for (size_t j = 0; j <= i; ++j) { // Compute only half the matrix_xd
+        for (int i = 0; i < num_numerical_columns; ++i) {
+            for (int j = 0; j <= i; ++j) { // Compute only half the matrix_xd
                 matrix_xd(i, j) = matrix_xd(j, i) = scitool::correlation(column_data[i], column_data[j]);
             }
         }
@@ -303,6 +305,11 @@ namespace scitool {
     }
 
     bool dataset::is_categorical(const std::string& column_name) {
+        auto col_it = std::find(columns.begin(), columns.end(), column_name);
+        if (col_it == columns.end()) {
+            throw std::invalid_argument("Column '" + column_name + "' does not exist");
+        }
+
         auto& col_stats = column_statistics[column_name];
         return std::find(categorical_columns.begin(), categorical_columns.end(), col_stats.col_index) != categorical_columns.end();
     }

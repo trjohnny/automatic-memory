@@ -21,7 +21,7 @@ namespace scitool {
         using matrix = std::vector<data_row>;
 
         struct column_stat {
-            size_t col_index;
+            int col_index;
             std::optional<double> mean;
             std::optional<double> std_dev;
             std::optional<double> median;
@@ -50,9 +50,9 @@ namespace scitool {
             typename matrix::iterator current;
         };
 
-        dataset(std::vector<std::string> cols, matrix matrix, std::set<size_t> num_cols, std::set<size_t> cat_cols)
+        dataset(std::vector<std::string> cols, matrix matrix, std::set<int> num_cols, std::set<int> cat_cols)
                 : data_matrix(std::move(matrix)), columns(std::move(cols)), numerical_columns(std::move(num_cols)), categorical_columns(std::move(cat_cols)) {
-            for (size_t col_idx = 0; col_idx < columns.size(); ++col_idx) {
+            for (int col_idx = 0; col_idx < columns.size(); ++col_idx) {
                 column_statistics[columns[col_idx]] = column_stat{};
                 column_statistics[columns[col_idx]].col_index = col_idx;
             }
@@ -84,8 +84,8 @@ namespace scitool {
         std::vector<std::string> columns;
         std::unordered_map<std::string, column_stat> column_statistics;
         std::optional<Eigen::MatrixXd> correlation_matrix;
-        std::set<size_t> numerical_columns;
-        std::set<size_t> categorical_columns;
+        std::set<int> numerical_columns;
+        std::set<int> categorical_columns;
 
         // Helper methods to calculate statistics
         void calculate_statistics();
@@ -96,8 +96,8 @@ namespace scitool {
         void calculate_frequency_count(const std::string& column_name); // For frequency count
         void calculate_correlation_matrix();
 
-        std::map<std::string, int> extract_categorical_column_data(size_t colIndex);
-        std::vector<std::optional<double>> extract_numerical_column_data(size_t col_index);
+        std::map<std::string, int> extract_categorical_column_data(int colIndex);
+        std::vector<std::optional<double>> extract_numerical_column_data(int col_index);
 
         static std::optional<dataset::data_variant> convert(const std::string &str);
         static std::vector<int> get_width(const std::vector<std::string>& vector) {

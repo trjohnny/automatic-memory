@@ -201,7 +201,8 @@ void handle_statistics_module() {
         std::cout << "1. Select CSV File\n";
         std::cout << "2. Statistical Info of a Column\n";
         std::cout << "3. Output Stats to File\n";
-        std::cout << "4. Return to Main Menu\n";
+        std::cout << "4. Print First 5 Lines of Dataset\n"; // New option
+        std::cout << "5. Return to Main Menu\n";
         std::cout << "Enter your choice: ";
         std::cin >> choice;
 
@@ -212,7 +213,7 @@ void handle_statistics_module() {
                 try {
                     ds = scitool::dataset::from_csv(csv_file_path);
                 } catch (std::invalid_argument& e) {
-                    std::cout << "Invalid input. The file does not exist." << std::endl;
+                    std::cout << "Invalid input. " << e.what() << std::endl;
                     break;
                 }
                 file_loaded = true; // Set to true if file is successfully loaded
@@ -225,26 +226,27 @@ void handle_statistics_module() {
                 }
                 std::cout << "Enter column name for statistical info: ";
                 std::cin >> column_name;
-                if (!ds->is_categorical(column_name))
-                {
-                    std::cout << "Stats for numerical column " << column_name << " :" << std::endl;
-                    double mean = ds->get_mean(column_name);
-                    double median = ds->get_median(column_name);
-                    double std_dev = ds->get_std_dev(column_name);
-                    double variance = ds->get_variance(column_name);
+                try {
+                    if (!ds->is_categorical(column_name)) {
+                        std::cout << "Stats for numerical column " << column_name << " :" << std::endl;
+                        double mean = ds->get_mean(column_name);
+                        double median = ds->get_median(column_name);
+                        double std_dev = ds->get_std_dev(column_name);
+                        double variance = ds->get_variance(column_name);
 
-                    std::cout << "  Mean = " << mean << std::endl;
-                    std::cout << "  Median = " << median << std::endl;
-                    std::cout << "  Standard deviation = " << std_dev << std::endl;
-                    std::cout << "  Variance = " << variance << std::endl;
-                }
-                else
-                {
-                    std::cout << "Stats for categorical column " << column_name << " :" << std::endl;
-                    std::map<std::string, int> frequency_count_map = ds->get_frequency_count(column_name);
-                    for (const auto& pair : frequency_count_map) {
-                        std::cout << " - " << pair.first << ": " << pair.second << "\n";
+                        std::cout << "  Mean = " << mean << std::endl;
+                        std::cout << "  Median = " << median << std::endl;
+                        std::cout << "  Standard deviation = " << std_dev << std::endl;
+                        std::cout << "  Variance = " << variance << std::endl;
+                    } else {
+                        std::cout << "Stats for categorical column " << column_name << " :" << std::endl;
+                        std::map<std::string, int> frequency_count_map = ds->get_frequency_count(column_name);
+                        for (const auto &pair: frequency_count_map) {
+                            std::cout << " - " << pair.first << ": " << pair.second << "\n";
+                        }
                     }
+                } catch (std::invalid_argument& e) {
+                    std::cout << "Invalid input. " << e.what() << std::endl;
                 }
                 break;
             }
@@ -258,8 +260,33 @@ void handle_statistics_module() {
                 ds->output_statistics(outputFilePath);
                 break;
             }
-            case 4:
+            case 4: {
+                if (!file_loaded) {
+                    std::cout << "Please load a CSV file first.\n";
+                    break;
+                }
+                std::cout << "First 5 lines of the dataset:\n\n";
+                int line_count = 0;
+                for (const auto& row : *ds) {
+                    if (line_count++ == 5) break; // Stop after printing 5 lines
+                    std::cout << "|";
+                    for (const auto& cell : row) {
+                        if (cell) {
+                            std::visit([](const auto& value) {
+                                std::cout << std::setw(12) << std::setprecision(6) << value << " |";
+                            }, *cell);
+                        } else {
+                            std::cout << "NULL ";
+                        }
+                    }
+                    std::cout << "\n";
+                }
+                break;
+            }
+
+            case 5:
                 return; // Return to the main menu
+
             default:
                 std::cout << "Invalid choice. Please try again.\n";
                 break;
