@@ -193,11 +193,11 @@ This is why testing the polynomial interpolator with 50 points (ending in 50) in
 
 
 ### Team Collaboration 
-- Giovanni Coronica [giovanni.coronica@studenti.units.it]:
+- Giovanni Coronica [giovanni.coronica@gmail.com]:
     - Developed of the Statistics Module.
     - Contributed to the design, test and development of the Interpolator module
 
-- Thomas Rossi Mel [thomas.rossimel@studenti.units.it]:
+- Thomas Rossi Mel [rossimelthomas@gmail.com]:
     - Developed the Interpolator Module.
     - Contributed to the design, test and development of the Statistics module
 
