@@ -30,8 +30,8 @@ PYBIND11_MODULE(statistics_py, m) {
                 return "<scitool.dataset with name " + a.get_file_name() + " >";
         })
         .def("map_column", [](scitool::dataset& self, const std::string& column_name, py::function func) {
-            self.map_column(column_name, [&func](auto& element) {
-                return func(element).template cast <decltype(element)>();
+            self.map_column(column_name, [&func](double value) -> double {
+                return func(value).cast<double>();
             });
         })
         .def("filter_rows", [](scitool::dataset& self, py::function filter) {

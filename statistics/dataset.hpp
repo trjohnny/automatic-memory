@@ -82,14 +82,25 @@ namespace scitool {
 
         template <typename Func>
         void map_column(const std::string& column_name, Func func) {
+            if (is_categorical(column_name)) {
+                throw std::invalid_argument("Column '" + column_name + "' is categorical and cannot be mapped with a double-to-double function.");
+            }
+
             int col_index = column_statistics[column_name].col_index;
             for (auto& row : data_matrix) {
                 auto& element = row[col_index];
                 if (element) {
-                    *element = func(*element);
+                    if (std::holds_alternative<double>(*element)) {
+                        auto& val = std::get<double>(*element);
+                        val = func(val);
+                    } else if (std::holds_alternative<int>(*element)) {
+                        int val = std::get<int>(*element);
+                        *element = func(static_cast<double>(val));
+                    }
                 }
             }
         }
+
 
         template <typename Func>
         void filter_rows(Func filter) {
