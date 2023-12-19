@@ -8,9 +8,18 @@ add_compile_options(-Wall -Wpedantic -Werror -Wextra)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 set(EIGEN_DIR "include/eigen-3.4.0")
 set(BOOST_DIR "include/boost-1.83.0")
-include_directories(${EIGEN_DIR} ${BOOST_DIR})
+set(STATISTICS_DIR "statistics")
+set(INTERPOLATORS_DIR "interpolation")
+include_directories(${EIGEN_DIR} ${BOOST_DIR} ${STATISTICS_DIR} ${INTERPOLATORS_DIR})
 
 add_executable(scientific-computing-toolbox main.cpp)
+
+# Find or download pybind11
+find_package(pybind11 REQUIRED)
+
+# Add Python module
+pybind11_add_module(statistics_py MODULE python/statistics_python_bindings.cpp)
+target_link_libraries(statistics_py PRIVATE statistics)
 
 # Add interpolators library
 add_library(interpolators SHARED

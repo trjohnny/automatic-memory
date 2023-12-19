@@ -66,6 +66,7 @@ namespace scitool {
         double get_std_dev(const std::string& column_name);
         double get_median(const std::string& column_name);
         double get_variance(const std::string& column_name);
+        const std::string& get_file_name() const;
         std::map<std::string, int> get_frequency_count(const std::string& column_name);
         Eigen::MatrixXd get_correlation_matrix();
 
@@ -79,6 +80,24 @@ namespace scitool {
             return data_matrix.end();
         }
 
+        template <typename Func>
+        void map_column(const std::string& column_name, Func func) {
+            int col_index = column_statistics[column_name].col_index;
+            for (auto& row : data_matrix) {
+                auto& element = row[col_index];
+                if (element) {
+                    *element = func(*element);
+                }
+            }
+        }
+
+        template <typename Func>
+        void filter_rows(Func filter) {
+            auto new_end = std::remove_if(data_matrix.begin(), data_matrix.end(),
+                                          [&](const data_row& row) { return !filter(row); });
+            data_matrix.erase(new_end, data_matrix.end());
+        }
+
     private:
         matrix data_matrix;
         std::vector<std::string> columns;
@@ -86,6 +105,7 @@ namespace scitool {
         std::optional<Eigen::MatrixXd> correlation_matrix;
         std::set<int> numerical_columns;
         std::set<int> categorical_columns;
+        std::string file_name;
 
         // Helper methods to calculate statistics
         void calculate_statistics();
@@ -100,6 +120,7 @@ namespace scitool {
         std::vector<std::optional<double>> extract_numerical_column_data(int col_index);
 
         static std::optional<dataset::data_variant> convert(const std::string &str);
+        static std::string extract_file_name(const std::string& path);
         static std::vector<int> get_width(const std::vector<std::string>& vector) {
             std::vector<int> widths;
             for (const auto& col : vector) {

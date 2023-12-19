@@ -59,8 +59,28 @@ namespace scitool {
             is_first_row = false;
         }
 
-        return std::make_unique<dataset>(std::move(columns_), std::move(data_matrix_),
-                                         std::move(numerical_columns_), std::move(categorical_columns_));
+        std::string file_name = extract_file_name(input_file);
+
+        auto ds = std::make_unique<dataset>(std::move(columns_), std::move(data_matrix_),
+                                            std::move(numerical_columns_), std::move(categorical_columns_));
+        ds->file_name = std::move(file_name);
+        return ds;
+    }
+
+    std::string dataset::extract_file_name(const std::string& path) {
+        // Find the last '/' or '\\' character (handle both Unix and Windows paths)
+        size_t last_slash = path.find_last_of("/\\");
+        if (last_slash == std::string::npos) last_slash = 0;
+        else last_slash++;
+
+        // Find the last '.' character
+        size_t last_dot = path.find_last_of('.');
+        if (last_dot == std::string::npos || last_dot < last_slash) {
+            last_dot = path.length();
+        }
+
+        // Extract file name without extension
+        return path.substr(last_slash, last_dot - last_slash);
     }
 
     void dataset::calculate_statistics() {
@@ -325,5 +345,9 @@ namespace scitool {
         if (*end == 0) return d;
 
         return str;
+    }
+
+    const std::string& dataset::get_file_name() const {
+        return file_name;
     }
 } // scitool
