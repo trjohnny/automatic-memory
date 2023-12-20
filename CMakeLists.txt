@@ -18,8 +18,11 @@ add_executable(scientific-computing-toolbox main.cpp)
 find_package(pybind11 REQUIRED)
 
 # Add Python module
-pybind11_add_module(statistics_py MODULE python/statistics_python_bindings.cpp)
+pybind11_add_module(statistics_py MODULE bindings/statistics_python_bindings.cpp)
 target_link_libraries(statistics_py PRIVATE statistics)
+
+pybind11_add_module(interpolator_py MODULE bindings/interpolator_python_bindings.cpp)
+target_link_libraries(interpolator_py PRIVATE interpolator)
 
 # Add interpolators library
 add_library(interpolators SHARED
@@ -27,6 +30,7 @@ add_library(interpolators SHARED
         interpolation/cardinal_cubic_bspline_Interpolator.cpp
         interpolation/linear_interpolator.cpp
         interpolation/polynomial_interpolator.cpp
+        bindings/interpolator_python_bindings.cpp
 )
 
 # Add interpolators library

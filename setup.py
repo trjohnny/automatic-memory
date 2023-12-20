@@ -43,7 +43,7 @@ setup(
     author='Your Name',
     description='A hybrid C++/Python scientific computing toolbox',
     long_description='',
-    ext_modules=[CMakeExtension('statistics_py', sourcedir='path/to/c++/source')],
+    ext_modules=[CMakeExtension('statistics_py', sourcedir=''), CMakeExtension('interpolator_py', sourcedir='')],
     cmdclass=dict(build_ext=CMakeBuild),
     zip_safe=False,
 )
