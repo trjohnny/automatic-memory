@@ -22,7 +22,7 @@ pybind11_add_module(statistics_py MODULE bindings/statistics_python_bindings.cpp
 target_link_libraries(statistics_py PRIVATE statistics)
 
 pybind11_add_module(interpolator_py MODULE bindings/interpolator_python_bindings.cpp)
-target_link_libraries(interpolator_py PRIVATE interpolator)
+target_link_libraries(interpolator_py PRIVATE interpolators)
 
 # Add interpolators library
 add_library(interpolators SHARED
