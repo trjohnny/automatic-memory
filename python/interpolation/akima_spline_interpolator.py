@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.interpolate import Akima1DInterpolator
-from .interpolator import Interpolator
+from interpolator_py import Interpolator
 import matplotlib.pyplot as plt
 
 class AkimaSplineInterpolator(Interpolator):
@@ -27,8 +27,8 @@ class AkimaSplineInterpolator(Interpolator):
         return self.spline.derivative(n)(point)
 
     def plot(self, start_interpolated_point, end_interpolated_point, step_interpolated_point):
-        x_points = [point.x for point in self.points]
-        y_points = [point.y for point in self.points]
+        x_points = [point.x for point in self._points]
+        y_points = [point.y for point in self._points]
         x_interpolated = np.arange(start_interpolated_point, end_interpolated_point, step_interpolated_point)
         y_interpolated = self.spline(x_interpolated)
 
