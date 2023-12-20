@@ -30,7 +30,6 @@ add_library(interpolators SHARED
         interpolation/cardinal_cubic_bspline_Interpolator.cpp
         interpolation/linear_interpolator.cpp
         interpolation/polynomial_interpolator.cpp
-        bindings/interpolator_python_bindings.cpp
 )
 
 # Add interpolators library

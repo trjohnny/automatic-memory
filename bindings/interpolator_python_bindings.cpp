@@ -3,29 +3,28 @@
 #include "interpolator.hpp"
 #include "linear_interpolator.hpp"
 #include "polynomial_interpolator.hpp"
-#include "cardinal_cubic_bspline_interpolator.hpp"
+#include "cardinal_cubic_bspline_Interpolator.hpp"
 
 namespace py = pybind11;
-using namespace scitool;
 
 PYBIND11_MODULE(interpolator_py, m) {
-    py::class_<point>(m, "Point")
+    py::class_<scitool::point>(m, "Point")
     .def(py::init<double, double>())
-    .def_readwrite("x", &point::x)
-    .def_readwrite("y", &point::y);
+    .def_readwrite("x", &scitool::point::x)
+    .def_readwrite("y", &scitool::point::y);
 
-    py::class_<interpolator, std::shared_ptr<interpolator>>(m, "Interpolator")
-    .def("__call__", &interpolator::operator());
+    py::class_<scitool::interpolator, std::shared_ptr<scitool::interpolator>>(m, "Interpolator")
+    .def("__call__", &scitool::interpolator::operator());
 
-    py::class_<linear_interpolator, interpolator, std::shared_ptr<linear_interpolator>>(m, "LinearInterpolator")
-    .def(py::init<const std::vector<point>&>())
-    .def("__call__", &linear_interpolator::operator());
+    py::class_<scitool::linear_interpolator, scitool::interpolator, std::shared_ptr<scitool::linear_interpolator>>(m, "LinearInterpolator")
+    .def(py::init<const std::vector<scitool::point>&>())
+    .def("__call__", &scitool::linear_interpolator::operator());
 
-    py::class_<polynomial_interpolator, interpolator, std::shared_ptr<polynomial_interpolator>>(m, "PolynomialInterpolator")
-    .def(py::init<const std::vector<point>&>())
-    .def("__call__", &polynomial_interpolator::operator());
+    py::class_<scitool::polynomial_interpolator, scitool::interpolator, std::shared_ptr<scitool::polynomial_interpolator>>(m, "PolynomialInterpolator")
+    .def(py::init<const std::vector<scitool::point>&>())
+    .def("__call__", &scitool::polynomial_interpolator::operator());
 
-    py::class_<cardinal_cubic_bspline_interpolator, interpolator, std::shared_ptr<cardinal_cubic_bspline_interpolator>>(m, "CardinalCubicBSplineInterpolator")
-    .def(py::init<const std::vector<point>&>())
-    .def("__call__", &cardinal_cubic_bspline_interpolator::operator());
+    py::class_<scitool::cardinal_cubic_bspline_interpolator, scitool::interpolator, std::shared_ptr<scitool::cardinal_cubic_bspline_interpolator>>(m, "CardinalCubicBSplineInterpolator")
+    .def(py::init<const std::vector<scitool::point>&>())
+    .def("__call__", &scitool::cardinal_cubic_bspline_interpolator::operator());
 }

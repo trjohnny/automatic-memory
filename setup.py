@@ -40,7 +40,7 @@ class CMakeBuild(build_ext):
 setup(
     name='scientific-computing-toolbox',
     version='0.1',
-    author='Your Name',
+    author='Giovanni Coronica & Thomas Rossi Mel',
     description='A hybrid C++/Python scientific computing toolbox',
     long_description='',
     ext_modules=[CMakeExtension('statistics_py', sourcedir=''), CMakeExtension('interpolator_py', sourcedir='')],
