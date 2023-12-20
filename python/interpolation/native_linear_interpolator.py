@@ -1,3 +1,4 @@
+from abc import abstractmethod
 from typing import List
 # Pythonic way to implement the linear interpolator
 # This file is used only to test and compare the performance with C++
@@ -15,6 +16,7 @@ class Interpolator:
             if self.points[i].x == self.points[i - 1].x:
                 raise ValueError("Two points have the same value for 'x'")
 
+    @abstractmethod
     def __call__(self, x_val: float) -> float:
         pass
 

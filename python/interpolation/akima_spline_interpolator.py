@@ -1,10 +1,11 @@
 import numpy as np
 from scipy.interpolate import Akima1DInterpolator
-from interpolator_py import Interpolator
+from interpolator_py import Interpolator, Point
 import matplotlib.pyplot as plt
+from typing import List
 
 class AkimaSplineInterpolator(Interpolator):
-    def __init__(self, points):
+    def __init__(self, points: List[Point]):
         super().__init__(points)
         if len(points) < 5:
             raise ValueError("At least five points are needed for Akima Spline interpolation")
@@ -13,20 +14,13 @@ class AkimaSplineInterpolator(Interpolator):
         y = [point.y for point in points]
         self.spline = Akima1DInterpolator(x, y)
 
-    def __call__(self, point):
+    def __call__(self, point: float) -> float:
         if point < self.points[0].x or point > self.points[-1].x:
             raise ValueError("Interpolation point out of range")
 
         return self.spline(point)
 
-
-    def integral(self, start, end):
-        return self.spline.integrate(start, end)
-
-    def derivative(self, point, n=1):
-        return self.spline.derivative(n)(point)
-
-    def plot(self, start_interpolated_point, end_interpolated_point, step_interpolated_point):
+    def plot(self, start_interpolated_point: float, end_interpolated_point: float, step_interpolated_point: float):
         x_points = [point.x for point in self._points]
         y_points = [point.y for point in self._points]
         x_interpolated = np.arange(start_interpolated_point, end_interpolated_point, step_interpolated_point)
