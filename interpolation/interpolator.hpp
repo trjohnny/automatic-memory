@@ -21,6 +21,10 @@ namespace scitool {
         interpolator(const std::vector<point> &);
         virtual ~interpolator() = default;
         virtual double operator()(double x_val) const = 0;
+
+        const std::vector<scitool::point>& get_points() const {
+            return points;
+        }
     };
 
 }

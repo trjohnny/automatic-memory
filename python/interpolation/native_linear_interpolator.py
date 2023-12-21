@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from typing import List
-# Pythonic way to implement the linear interpolator
+# Fully pythonic way to implement the linear interpolator
 # This file is used only to test and compare the performance with C++
 # Numpy could also be used, but we want to test the performance with built-in lists (also, numpy use c++ a lot)
 class Point:
