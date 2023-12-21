@@ -72,7 +72,7 @@ def compare_languages_performance():
     time_scipy = measure_time_decorator(execute_interpolation)(interp1d(x, y, kind='linear'), x_values)
 
     print(f"Time taken by native (python) linear interpolator for 1k points: {time_native} seconds")
-    print(f"Time taken by non-native (C++) LinearInterpolator for 1k points: {time_non_native} seconds")
+    print(f"Time taken by non-native (C++) linear interpolator for 1k points: {time_non_native} seconds")
     print(f"Time taken by scipy's linear interpolator for 1k points: {time_scipy} seconds")
 
 

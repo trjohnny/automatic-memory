@@ -1,4 +1,4 @@
-# Scientific Computing Toolbox
+# Scientific Computing Toolbox (HOMEWORK 2)
 ## Overview
 The Scientific Computing Toolbox is a comprehensive C++ library designed for advanced scientific computing and data 
 analysis. It includes two key modules as shared libraries: the Statistics Library and the Interpolator Module, each 
@@ -201,3 +201,57 @@ This is why testing the polynomial interpolator with 50 points (ending in 50) in
     - Developed the Interpolator Module.
     - Contributed to the design, test and development of the Statistics module
 
+# Scientific Computing Toolbox (HOMEWORK 3)
+## Prerequisites
+For this third homework assignment, along with the previously required dependencies, the following are also necessary:
+- Pybind11 (tested with version 2.11.1)
+- Python installation (tested with version 3.11.6)
+- Numpy (tested with version 1.26.2)
+- Scipy (tested with version 1.11.4)
+- Matplotlib (tested with version 3.8.2)
+
+## Building the Toolbox
+1. Move to the main folder containing CMakeLists.txt.
+2. Run the command:
+   ```
+    python setup.py install
+   ```
+3. Execute the program by running the main.py file in the Python code folder:
+   ```
+    python main.py
+   ```
+## Interpolator Analysis
+We'll now proceed with an analysis and review of the interpolation module.
+
+### Features
+- All previously available features are retained and functional in Python.
+- New features have been added: Plotting, Derivative calculation, Integral calculation.
+- Introduction of the Akima Spline interpolator.
+- Inclusion of a native linear interpolator class for performance comparison with C++.
+
+### Design Choices: Binding
+1. Maintained consistent naming conventions between Python and C++ for clarity and coherence across both languages.
+2. Considered class inheritance and differences between C++ and Python. For instance, the py_interpolator wrapper class and binding the `__call__` method to `operator()`.
+
+### Design Choices: Extended Interpolator
+To add functionalities (derivative, integral, and plotting) to all C++ interpolators, an ExtendedInterpolator class was introduced.
+1. It extends the base Interpolator while adding necessary functionalities.
+2. Added a method to convert any interpolator (e.g., linear or polynomial) to an advanced interpolator through a `from_interpolator` static method, instantiating an ExtendedInterpolator class.
+
+### Testing and Results
+All methods were thoroughly tested within the main.py file. A performance analysis yielded the following results:
+
+- Time taken by native (Python) linear interpolator for 1k points: 1.2787 seconds
+- Time taken by non-native (C++) linear interpolator for 1k points: 0.0032 seconds
+- Time taken by Scipy's linear interpolator for 1k points: 0.0042 seconds
+
+These results highlight the substantial performance advantage of C++, especially when utilizing C++'s vectors compared to Python lists. Python execution time is notably higher, approximately 433 times slower than C++. The performance improves when utilizing optimized libraries like Scipy and Numpy, leveraging C++ in the background for enhanced efficiency.
+
+## Team Collaboration
+### Giovanni Coronica [giovanni.coronica@gmail.com]
+- Bound and extended the Statistics library.
+- Contributed to the development and testing of the Interpolator module (both Python and C++).
+
+### Thomas Rossi Mel [rossimelthomas@gmail.com]
+- Bound and extended the Interpolator Module.
+- Contributed to the design, testing, and development of the Statistics module (both Python and C++).
