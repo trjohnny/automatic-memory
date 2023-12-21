@@ -20,10 +20,40 @@ def plot_interpolators():
     interpolator = AkimaSplineInterpolator(data_points)
     interpolator.plot()
 
-    interpolator = LinearInterpolator(data_points) 
+    interpolator = LinearInterpolator(data_points)
     interpolator = ExtendedInterpolator.from_interpolator(interpolator)
     interpolator.plot()
 
+
+def test_derivate():
+    data_points = [Point(0, 0), Point(1, 1), Point(2, 0)]
+
+    interpolator = LinearInterpolator(data_points)
+    interpolator = ExtendedInterpolator.from_interpolator(interpolator)
+
+    x_values = [0.0, 0.5, 1.5]
+    expected_derivatives = [1.0, 1.0, -1.0]  # Precomputed derivatives for the given x-values
+
+    for i, x_value in enumerate(x_values):
+        assert round(interpolator.derivative(x_value), 6) == round(expected_derivatives[i], 6), f"Derivative mismatch at x = {x_value}"
+
+    print("Derivative tests passed successfully.")
+
+def test_integral():
+    data_points = [Point(0, 0), Point(1, 1), Point(2, -1)]
+
+    interpolator = LinearInterpolator(data_points)
+    interpolator = ExtendedInterpolator.from_interpolator(interpolator)
+
+    start_x_values = [0.0, 1.0]
+    end_x_values = [1.0, 2.0]
+    expected_integrals = [0.5, 0]  # Precomputed integrals for the given x-limits
+
+    for start, end, expected_integral in zip(start_x_values, end_x_values, expected_integrals):
+        calculated_integral = interpolator.integral(start, end)
+        assert round(calculated_integral, 6) == round(expected_integral, 6), f"Integral mismatch between x = {start} and {end}"
+
+    print("Integral tests passed successfully.")
 
 def compare_languages_performance():
     def execute_interpolation(interpolator, x_values):
@@ -41,12 +71,18 @@ def compare_languages_performance():
     time_non_native = measure_time_decorator(execute_interpolation)(LinearInterpolator(points), x_values)
     time_scipy = measure_time_decorator(execute_interpolation)(interp1d(x, y, kind='linear'), x_values)
 
-    print(f"Time taken by native (python) linear interpolator: {time_native} seconds")
-    print(f"Time taken by non-native (C++) LinearInterpolator: {time_non_native} seconds")
-    print(f"Time taken by scipy's linear interpolator: {time_scipy} seconds")
+    print(f"Time taken by native (python) linear interpolator for 1k points: {time_native} seconds")
+    print(f"Time taken by non-native (C++) LinearInterpolator for 1k points: {time_non_native} seconds")
+    print(f"Time taken by scipy's linear interpolator for 1k points: {time_scipy} seconds")
 
 
 
 if __name__ == "__main__":
+
+    # interpolation
     compare_languages_performance()
+    test_derivate()
+    test_integral()
+
+    print("All test successful, now plotting some interpolated functions. ")
     plot_interpolators()

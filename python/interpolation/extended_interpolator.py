@@ -23,6 +23,21 @@ class ExtendedInterpolator(Interpolator):
     def __len__(self):
         return len(self.points)
 
+    def derivative(self, x_value):
+        epsilon = 1e-6
+        f_x = self(x_value)
+        f_x_plus_epsilon = self(x_value + epsilon)
+        return (f_x_plus_epsilon - f_x) / epsilon
+
+    def integral(self, start_x, end_x, num_samples=1000):
+        if start_x >= end_x:
+            raise ValueError("Start x-value should be less than the end x-value.")
+
+        x_values = np.linspace(start_x, end_x, num_samples)
+        y_values = [self(x) for x in x_values]
+
+        integral_value = np.trapz(y_values, x=x_values)
+        return integral_value
 
     # For new python interpolators (like Akime) we can extend this class,
     # but for c++ interpolator classes, we cannot extend it or modify the code.
