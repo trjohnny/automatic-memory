@@ -7,6 +7,8 @@
 #include <optional>
 #include <memory>
 #include <variant>
+#include <iostream>
+#include <fstream>
 #include "Eigen/Core"
 
 #ifndef DATASET_HPP
@@ -99,14 +101,46 @@ namespace scitool {
                     }
                 }
             }
+
+            reset_values(col_index);
+        }
+
+        auto size() const  {
+            return data_matrix.size();
+        }
+
+        template <typename Func>
+        void filter_rows(const std::string& column_name, Func func) {
+            int col_index = column_statistics[column_name].col_index;
+
+            auto new_end = std::remove_if(data_matrix.begin(), data_matrix.end(), [&](const data_row& row) -> bool {
+
+                const auto& data_variant = *row[col_index];  // Get the variant
+
+                // Check and apply filter based on type
+                if (std::holds_alternative<double>(data_variant)) {
+                    double value = std::get<double>(data_variant);
+                    bool filterResult = func(value);
+                    return !filterResult;
+                } else if (std::holds_alternative<int>(data_variant)) {
+                    auto value = static_cast<double>(std::get<int>(data_variant));
+                    bool filterResult = func(value);
+                    return !filterResult;
+                } else {
+                    return true;
+                }
+            });
+
+            data_matrix.erase(new_end, data_matrix.end());
+            reset_values(col_index);  // Assuming this function correctly resets column stats
         }
 
 
-        template <typename Func>
-        void filter_rows(Func filter) {
-            auto new_end = std::remove_if(data_matrix.begin(), data_matrix.end(),
-                                          [&](const data_row& row) { return !filter(row); });
-            data_matrix.erase(new_end, data_matrix.end());
+        const data_row& operator[](size_t index) const {
+            if (index >= data_matrix.size()) {
+                throw std::out_of_range("Index out of range");
+            }
+            return data_matrix[index];
         }
 
     private:
@@ -139,6 +173,8 @@ namespace scitool {
             }
             return widths;
         }
+
+        void reset_values(size_t col_index);
 
     };
 

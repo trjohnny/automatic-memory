@@ -350,4 +350,20 @@ namespace scitool {
     const std::string& dataset::get_file_name() const {
         return file_name;
     }
+
+    void dataset::reset_values(size_t col_index) {
+        // Check if the column index is valid
+        if(col_index < columns.size()) {
+            // Reset the column statistics to their default (empty) state
+            auto &col_stat = column_statistics[columns[col_index]];
+            col_stat.mean = std::nullopt;
+            col_stat.std_dev = std::nullopt;
+            col_stat.median = std::nullopt;
+            col_stat.variance = std::nullopt;
+            col_stat.frequency_count = std::nullopt;
+            correlation_matrix = std::nullopt;
+        } else {
+            throw std::out_of_range("Column index out of range");
+        }
+    }
 } // scitool
