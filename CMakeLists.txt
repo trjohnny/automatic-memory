@@ -15,6 +15,7 @@ include_directories(${EIGEN_DIR} ${BOOST_DIR} ${STATISTICS_DIR} ${INTERPOLATORS_
 add_executable(scientific-computing-toolbox main.cpp)
 
 # Find or download pybind11
+set(PYBIND11_PYTHON_VERSION 3.11)
 find_package(pybind11 REQUIRED)
 
 # Add Python module
