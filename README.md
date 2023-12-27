@@ -247,6 +247,56 @@ All methods were thoroughly tested within the main.py file. A performance analys
 
 These results highlight the substantial performance advantage of C++, especially when utilizing C++'s vectors compared to Python lists. Python execution time is notably higher, approximately 433 times slower than C++. The performance improves when utilizing optimized libraries like Scipy and Numpy, leveraging C++ in the background for enhanced efficiency.
 
+## Statistics analysis
+
+This section provides an analysis of the performance results obtained from testing a custom C++ dataset implementation 
+against Pandas operations in Python. The tests were conducted to measure the time efficiency of basic statistical 
+operations and row filtering tasks on a dataset. The focus is on the design choices regarding the Python wrapper class, 
+new functionalities like map and filter, and the bindings to the C++ library.
+
+### Features
+
+- Python Wrapper for C++ Dataset: Offers a seamless Python interface to a robust C++ dataset implementation, supporting 
+statistical analysis and data manipulation methods.
+- Visualization and Statistical Tools: Enables correlation matrix visualization and provides essential statistical 
+functions like mean, median, and variance directly in Python.
+- Performance Comparison: Includes functionality to compare the performance of dataset operations between native Python 
+(Pandas) and the C++ backed Python implementation.
+- Data Manipulation: Introduces map_column and filter_rows methods for dynamic data manipulation, offering a Pythonic
+way to apply functions and filter data in datasets.
+
+### Design choices: Bindings
+
+1. A Python-C++ interface was created using Pybind11, a lightweight header-only library that exposes C++ types in Python 
+and vice versa. This allows the existing C++ dataset implementation to be utilized directly from Python.
+2. Bindings were specifically designed for the dataset operations, ensuring that the complex data structures and 
+algorithms of the C++ codebase could be accessed and manipulated from Python.
+
+### Design choices: Wrapper python class
+
+1. The Python wrapper class PyDataset was created to provide a Pythonic interface to the underlying C++ dataset 
+functionalities. It acts as a facade over the C++ implementation, making it more accessible and easier to use from Python.
+2. The wrapper class ensures that data types and structures are seamlessly converted between Python and C++, abstracting 
+away the complexity of direct C++ interaction. This includes handling conversions between Eigen matrices and Numpy arrays,
+iterating over the dataset, and exposing property-like access to dataset characteristics.
+3. Enhancements like the display_correlation_matrix method were added to integrate with Python's rich ecosystem, allowing 
+for direct visualization using libraries like Matplotlib and Seaborn.
+
+### Discussion: Ease of Use vs. Performance
+* The introduction of a Python wrapper class and binding to an existing C++ implementation aimed to balance ease of use 
+with the performance benefits of C++. While C++ is known for its efficiency, Python's ease of use and vast ecosystem of 
+data science libraries are unparalleled.
+* By providing a familiar Pythonic interface to the robust C++ dataset operations, users can leverage the speed of compiled 
+code without extensive knowledge of C++ or the burden of dealing with its complexity for data manipulation and analysis tasks.
+### Discussion: Performance Balance:
+* The performance discrepancy noted between the custom C++ implementation (even when accessed via Python) and Pandas is a 
+reflection of the highly optimized nature of Pandas, which is written in Cython and C. These optimizations are specifically 
+tailored for data manipulation tasks and are the result of years of development and refinement.
+* While the custom C++ implementation provides an opportunity for fine-tuned optimizations and potentially faster execution 
+for certain operations, achieving and surpassing the performance of Pandas requires significant effort in optimization, 
+algorithm selection, and possibly parallelization.
+
+
 ## Team Collaboration
 ### Giovanni Coronica [giovanni.coronica@gmail.com]
 - Bound and extended the Statistics library.

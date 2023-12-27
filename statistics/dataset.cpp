@@ -30,8 +30,6 @@ namespace scitool {
             }
         }
 
-        // Read first data row and determine column types
-        bool is_first_row = true;
         while (std::getline(file, line)) {
             std::istringstream line_stream(line);
             std::string cell;
@@ -42,9 +40,11 @@ namespace scitool {
                 // Convert string to data_variant
                 auto data_variant = dataset::convert(cell);
                 data_row.push_back(data_variant);
+                if (!data_variant.has_value()) continue;
 
                 // On first row, determine if the column is numerical
-                if (is_first_row) {
+                if (numerical_columns_.size() + categorical_columns_.size() < columns_.size()) {
+
                     if (std::holds_alternative<int>(data_variant.value()) ||
                         std::holds_alternative<double>(data_variant.value())) {
                         numerical_columns_.insert(column_index);
@@ -56,7 +56,6 @@ namespace scitool {
                 column_index++;
             }
             data_matrix_.push_back(std::move(data_row));
-            is_first_row = false;
         }
 
         std::string file_name = extract_file_name(input_file);
