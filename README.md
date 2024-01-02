@@ -216,10 +216,8 @@ For this third homework assignment, along with the previously required dependenc
    ```
     python setup.py install
    ```
-3. Execute the program by running the main.py file in the Python code folder:
-   ```
-    python main.py
-   ```
+3. Test the toolbox using the notebook ```test.ipynb``` in the python folder.
+
 ## Interpolator Analysis
 We'll now proceed with an analysis and review of the interpolation module.
 
