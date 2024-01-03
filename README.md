@@ -263,6 +263,12 @@ functions like mean, median, and variance directly in Python.
 - Data Manipulation: Introduces map_column and filter_rows methods for dynamic data manipulation, offering a Pythonic
 way to apply functions and filter data in datasets.
 
+### Design choices: new functions in the header
+The map_column and filter_rows methods are defined in the scitool::dataset header file to resolve linkage issues inherent 
+with C++ templated functions when interfaced with Python using pybind11. Templated functions must be fully defined in 
+every translation unit they're used in; thus, defining these functions in the header ensures that their templates are 
+instantiated correctly and accessible during the binding process.
+
 ### Design choices: Bindings
 
 1. A Python-C++ interface was created using Pybind11, a lightweight header-only library that exposes C++ types in Python 
