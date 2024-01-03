@@ -7,19 +7,25 @@
 namespace scitool {
 
     template<typename T>
-    static double median(const std::vector<std::optional<T>>& data) { // Note: pass by value
-        if (data.empty()) {
-            throw std::runtime_error("Cannot compute median of an empty vector");
+    static double median(const std::vector<std::optional<T>>& data) {
+        // Filter out non-engaged optionals and copy engaged values to a new vector
+        std::vector<T> values;
+        for (const auto& opt : data) {
+            if (opt) values.push_back(*opt);
         }
 
-        std::vector<std::optional<T>> sorted_data = data;
+        if (values.empty()) {
+            throw std::runtime_error("Cannot compute median of an empty or fully non-engaged optional vector");
+        }
 
-        std::sort(sorted_data.begin(), sorted_data.end());
+        // Sort the vector of engaged values
+        std::sort(values.begin(), values.end());
 
-        size_t n = sorted_data.size();
+        size_t n = values.size();
         size_t mid = n / 2;
 
-        return n % 2 == 0 ? (sorted_data[mid].value() + sorted_data[mid - 1].value()) / 2.0 : sorted_data[mid].value();
+        // Calculate median based on odd or even size
+        return n % 2 == 0 ? (values[mid] + values[mid - 1]) / 2.0 : values[mid];
     }
 
 
